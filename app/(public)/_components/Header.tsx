@@ -1,132 +1,165 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import ThemeToggle from "./ThemeToggle";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 
-const NAV_LINKS = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-];
+// Mock authentication context (to be replaced with actual implementation)
+const useAuth = () => ({
+  user: null, // Mock user state
+  cart: [], // Mock cart state
+  logout: () => {} // Mock logout function
+});
 
 export default function Header() {
-    const pathname = usePathname();
-    const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, cart, logout } = useAuth();
 
-    const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname?.startsWith(href));
+  const [showMenu, setShowMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    return (
-        <header className="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-black/10 dark:border-white/10">
-            <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Global">
-                <div className="flex h-16 items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] w-full">
-                    {/* Left: Logo */}
-                    <div className="flex items-center gap-2">
-                        <Link href="/" className="flex items-center gap-2 group">
-                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-foreground text-background font-semibold">
-                                M
-                            </span>
-                            <span className="text-base font-semibold tracking-tight group-hover:opacity-80 transition-opacity">
-                                MyApp
-                            </span>
-                        </Link>
-                    </div>
+  const toggleMenu = () => setShowMenu(prev => !prev);
+  const toggleMobileMenu = () => setMobileMenuOpen(prev => !prev);
 
-                    {/* Center: Desktop Nav */}
-                    <div className="hidden md:flex items-center gap-6 justify-self-center">
-                        {NAV_LINKS.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={
-                                    "text-sm font-medium transition-colors hover:text-foreground/80 " +
-                                    (isActive(link.href) ? "text-foreground" : "text-foreground/60")
-                                }
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                    </div>
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        mobileMenuOpen &&
+        e.target &&
+        !(e.target as HTMLElement).closest('.mobile-menu-toggle') &&
+        !(e.target as HTMLElement).closest('.mobile-nav')
+      ) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [mobileMenuOpen]);
 
-                    {/* Right: Auth + Mobile Toggle */}
-                    <div className="flex items-center gap-2 md:justify-self-end">
-                        <div className="hidden sm:flex items-center gap-2">
-                            <Link
-                                href="/login"
-                                className="h-9 px-3 inline-flex items-center justify-center rounded-md border border-black/10 dark:border-white/15 text-sm font-medium hover:bg-foreground/5 transition-colors"
-                            >
-                                Log in
-                            </Link>
-                            <Link
-                                href="/register"
-                                className="h-9 px-3 inline-flex items-center justify-center rounded-md bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-opacity"
-                            >
-                                Sign up
-                            </Link>
-                        </div>
+  const active = (path: string) =>
+    pathname === path
+      ? 'text-green-500 font-semibold border-b-2 border-green-500 pb-[2px]'
+      : '';
 
-                        {/* Theme toggle */}
-                        <ThemeToggle />
+  return (
+    <header className="bg-white text-[#64bf69] py-4 relative shadow-md font-montserrat">
+      <div className="w-full flex items-center justify-between relative pl-6 pr-6 font-montserrat">
 
-                        {/* Mobile hamburger */}
-                        <button
-                            type="button"
-                            onClick={() => setOpen((v) => !v)}
-                            aria-label="Toggle menu"
-                            aria-expanded={open}
-                            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-black/10 dark:border-white/15 hover:bg-foreground/5 transition-colors"
-                        >
-                            {open ? (
-                                // Close icon
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                                    <path fillRule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
-                                </svg>
-                            ) : (
-                                // Hamburger icon
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                                    <path fillRule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm0 6a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm0 6a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
-                                </svg>
-                            )}
-                        </button>
-                    </div>
-                </div>
+        {/* Logo */}
+        <h1 className="text-2xl font-bold flex items-center font-montserrat">
+          <span className="text-gray-500">nurser</span>
+          <span className="text-[#67e36e]">E</span>
+        </h1>
 
-                {/* Mobile panel */}
-                <div className={"md:hidden overflow-hidden transition-[max-height] duration-300 " + (open ? "max-h-96" : "max-h-0")}>
-                    <div className="pb-4 pt-2 border-t border-black/10 dark:border-white/10">
-                        <div className="flex flex-col gap-2">
-                            {NAV_LINKS.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    onClick={() => setOpen(false)}
-                                    className={
-                                        "rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-foreground/5 " +
-                                        (isActive(link.href) ? "text-foreground" : "text-foreground/70")
-                                    }
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-montserrat">
+          <ul className="flex gap-14 px-4">
+            <li><Link href="/" className={`nav-link text-black hover:text-[#62cf66] font-montserrat ${active('/')}`}>Home</Link></li>
+            <li><Link href="/categories" className={`nav-link text-black hover:text-[#62cf66] font-montserrat ${active('/categories')}`}>Categories</Link></li>
+            <li><a href="#about" className="nav-link text-black hover:text-[#62cf66] font-montserrat">About</a></li>
+            <li><a href="#contact" className="nav-link text-black hover:text-[#62cf66] font-montserrat">Contact</a></li>
+          </ul>
+        </nav>
 
-                            <div className="mt-2 flex items-center gap-2">
-                                <Link
-                                    href="/login"
-                                    className="flex-1 h-9 px-3 inline-flex items-center justify-center rounded-md border border-black/10 dark:border-white/15 text-sm font-medium hover:bg-foreground/5 transition-colors"
-                                >
-                                    Log in
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    className="flex-1 h-9 px-3 inline-flex items-center justify-center rounded-md bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-opacity"
-                                >
-                                    Sign up
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header>
-    );
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-4 font-montserrat">
+
+          {user && (
+            <Link href="/cart" className="relative flex items-center justify-center min-w-[44px] min-h-[44px] text-green-500 hover:text-[#62cf66]">
+              <span className="material-icons">shopping_cart</span>
+              {cart.length > 0 && (
+                <span className="absolute top-0 right-0 bg-red-600 text-white text-[0.7rem] px-[6px] py-[2px] rounded-full min-w-[20px] text-center">
+                  {cart.length}
+                </span>
+              )}
+            </Link>
+          )}
+
+          {/* Profile/Signin Button */}
+          <div className="relative">
+            {user ? (
+              <span className="material-icons text-[1.8rem] cursor-pointer text-green-500 hover:text-[#62cf66] min-w-[44px] min-h-[44px] flex items-center justify-center"
+                onClick={toggleMenu}
+              >
+                account_circle
+              </span>
+            ) : (
+              <Link 
+                href="/login" 
+                className="px-4 py-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors duration-300 font-semibold text-lg"
+              >
+                Sign In
+              </Link>
+            )}
+
+            {showMenu && user && (
+              <div
+                onMouseLeave={() => setShowMenu(false)}
+                className="absolute right-0 top-[120%] bg-white border border-gray-300 rounded shadow-md z-[1000]"
+              >
+                <span
+                  onClick={() => { logout(); router.push('/'); }}
+                  className="block px-4 py-2 min-h-[44px] leading-[33px] cursor-pointer hover:bg-gray-100 hover:text-[#62cf66]"
+                >
+                  Logout
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="mobile-menu-toggle flex md:hidden items-center justify-center min-w-[44px] min-h-[44px] text-green-500 hover:text-[#62cf66] z-[1002]"
+          onClick={toggleMobileMenu}
+        >
+          <span className="material-icons text-[1.8rem]">
+            {mobileMenuOpen ? 'close' : 'menu'}
+          </span>
+        </button>
+      </div>
+
+      {/* Mobile Nav */}
+      <nav
+        className={`mobile-nav fixed top-0 left-0 h-screen w-[80%] max-w-[300px] bg-white shadow-lg transition-all duration-300 z-[1001] overflow-y-auto
+        ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        <ul className="pt-20 px-4">
+          <li><Link href="/" onClick={() => setMobileMenuOpen(false)} className={`nav-link block p-4 rounded ${active('/')}`}>Home</Link></li>
+          <li><Link href="/categories" onClick={() => setMobileMenuOpen(false)} className={`nav-link block p-4 rounded ${active('/categories')}`}>Categories</Link></li>
+          <li><a href="#about" onClick={() => setMobileMenuOpen(false)} className="nav-link block p-4">About</a></li>
+          <li><a href="#contact" onClick={() => setMobileMenuOpen(false)} className="nav-link block p-4">Contact</a></li>
+
+          {user && (
+            <li>
+              <Link href="/cart" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 p-4">
+                <span className="material-icons text-lg">shopping_cart</span>
+                Cart {cart.length > 0 && `(${cart.length})`}
+              </Link>
+            </li>
+          )}
+
+          <li>
+            {user ? (
+              <span
+                onClick={() => { logout(); router.push('/'); setMobileMenuOpen(false); }}
+                className="block p-4 cursor-pointer"
+              >
+                Logout
+              </span>
+            ) : (
+              <Link 
+                href="/login" 
+                onClick={() => setMobileMenuOpen(false)} 
+                className="block px-4 py-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors duration-300 font-semibold text-lg text-center mx-auto w-fit"
+              >
+                Sign In
+              </Link>
+            )}
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
 }

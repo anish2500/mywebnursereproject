@@ -1,6 +1,14 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 export default function Footer() {
+  const [currentYear, setCurrentYear] = useState(2024);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer
       id="contact"
@@ -44,7 +52,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <p className="text-[0.8rem] text-[#777] font-montserrat">
-          © {new Date().getFullYear()} nurserE. All rights reserved.
+          © {currentYear} nurserE. All rights reserved.
         </p>
       </div>
     </footer>

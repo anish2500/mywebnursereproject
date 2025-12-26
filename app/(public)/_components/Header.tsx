@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 
-// Mock authentication context (to be replaced with actual implementation)
+
 const useAuth = () => ({
   user: null, // Mock user state
   cart: [], // Mock cart state
@@ -23,6 +23,9 @@ export default function Header() {
   const toggleMobileMenu = () => setMobileMenuOpen(prev => !prev);
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     const handleClickOutside = (e: MouseEvent) => {
       if (
         mobileMenuOpen &&
@@ -37,10 +40,18 @@ export default function Header() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [mobileMenuOpen]);
 
-  const active = (path: string) =>
-    pathname === path
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const active = (path: string) => {
+    if (!isClient) return ''; // Return empty class during SSR
+    return pathname === path
       ? 'text-green-500 font-semibold border-b-2 border-green-500 pb-[2px]'
       : '';
+  };
 
   return (
     <header className="bg-white text-[#64bf69] py-4 relative shadow-md font-montserrat">
@@ -66,10 +77,10 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-4 font-montserrat">
 
           {user && (
-            <Link href="/cart" className="relative flex items-center justify-center min-w-[44px] min-h-[44px] text-green-500 hover:text-[#62cf66]">
+            <Link href="/cart" className="relative flex items-center justify-center min-w-11 min-h-11 text-green-500 hover:text-[#62cf66]">
               <span className="material-icons">shopping_cart</span>
               {cart.length > 0 && (
-                <span className="absolute top-0 right-0 bg-red-600 text-white text-[0.7rem] px-[6px] py-[2px] rounded-full min-w-[20px] text-center">
+                <span className="absolute top-0 right-0 bg-red-600 text-white text-[0.7rem] px-1.5 py-0.5 rounded-full min-w-5 text-center">
                   {cart.length}
                 </span>
               )}
@@ -79,7 +90,7 @@ export default function Header() {
           {/* Profile/Signin Button */}
           <div className="relative">
             {user ? (
-              <span className="material-icons text-[1.8rem] cursor-pointer text-green-500 hover:text-[#62cf66] min-w-[44px] min-h-[44px] flex items-center justify-center"
+              <span className="material-icons text-[1.8rem] cursor-pointer text-green-500 hover:text-[#62cf66] min-w-11 min-h-11 flex items-center justify-center"
                 onClick={toggleMenu}
               >
                 account_circle
@@ -96,11 +107,11 @@ export default function Header() {
             {showMenu && user && (
               <div
                 onMouseLeave={() => setShowMenu(false)}
-                className="absolute right-0 top-[120%] bg-white border border-gray-300 rounded shadow-md z-[1000]"
+                className="absolute right-0 top-[120%] bg-white border border-gray-300 rounded shadow-md z-1000"
               >
                 <span
                   onClick={() => { logout(); router.push('/'); }}
-                  className="block px-4 py-2 min-h-[44px] leading-[33px] cursor-pointer hover:bg-gray-100 hover:text-[#62cf66]"
+                  className="block px-4 py-2 min-h-11 leading-8.25 cursor-pointer hover:bg-gray-100 hover:text-[#62cf66]"
                 >
                   Logout
                 </span>
@@ -111,19 +122,20 @@ export default function Header() {
 
         {/* Mobile Menu Button */}
         <button
-          className="mobile-menu-toggle flex md:hidden items-center justify-center min-w-[44px] min-h-[44px] text-green-500 hover:text-[#62cf66] z-[1002]"
+          className="mobile-menu-toggle flex md:hidden items-center justify-center min-w-11 min-h-11 text-green-500 hover:text-[#62cf66] z-1002"
           onClick={toggleMobileMenu}
         >
           <span className="material-icons text-[1.8rem]">
-            {mobileMenuOpen ? 'close' : 'menu'}
+            {isClient && mobileMenuOpen ? 'close' : 'menu'}
           </span>
         </button>
       </div>
 
       {/* Mobile Nav */}
       <nav
-        className={`mobile-nav fixed top-0 left-0 h-screen w-[80%] max-w-[300px] bg-white shadow-lg transition-all duration-300 z-[1001] overflow-y-auto
-        ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`mobile-nav fixed top-0 left-0 h-screen w-[80%] max-w-75 bg-white shadow-lg transition-all duration-300 z-1001 overflow-y-auto ${
+          isClient && mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
         <ul className="pt-20 px-4">
           <li><Link href="/" onClick={() => setMobileMenuOpen(false)} className={`nav-link block p-4 rounded ${active('/')}`}>Home</Link></li>

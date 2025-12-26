@@ -21,25 +21,20 @@ export default function LoginForm() {
     });
     const [pending, setTransition] = useTransition();
     const [showPassword, setShowPassword] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
 
     const submit = async (values: LoginData) => {
       
         setTransition( async () => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            setShowSuccess(true);
-         
+            
+            // Redirect to dashboard immediately after successful login
+            router.push('/dashboard');
         })
         console.log("login", values);
     };
 
     return (
         <div className="w-full max-w-105 bg-white rounded-2xl shadow-xl px-10 py-12 text-center font-montserrat">
-            {showSuccess && (
-                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                    Login successful! Welcome back.
-                </div>
-            )}
             <h2 className="text-2xl font-bold text-gray-800 mb-2 font-montserrat">Sign in to your account</h2>
             <p className="text-sm text-gray-500 mb-8">
                 Enter your credentials to access your account

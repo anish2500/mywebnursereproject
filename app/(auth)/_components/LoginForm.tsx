@@ -24,11 +24,11 @@ export default function LoginForm() {
     const [showSuccess, setShowSuccess] = useState(false);
 
     const submit = async (values: LoginData) => {
-        // GOTO
+      
         setTransition( async () => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             setShowSuccess(true);
-            // router.push("/");
+         
         })
         console.log("login", values);
     };

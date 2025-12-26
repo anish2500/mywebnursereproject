@@ -11,7 +11,13 @@ body {
   font-family: var(--font-montserrat), Arial, Helvetica, sans-serif;
 }
 
-/* Nav link: slightly bolder text */
+
+.font-montserrat {
+  font-family: var(--font-montserrat), Arial, Helvetica, sans-serif;
+}
+
+
+
 .nav-link {
   font-weight: 500; /* bolder */
   transition: color 160ms ease, transform 160ms ease;

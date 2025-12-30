@@ -5,16 +5,22 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 
 
-const useAuth = () => ({
-  user: null, // Mock user state
-  cart: [], // Mock cart state
-  logout: () => {} // Mock logout function
+const useAuth = (isLoggedIn: boolean = false) => ({
+  user: isLoggedIn ? { 
+    name: 'John Doe', 
+    email: 'john.doe@example.com'
+  } : null,
+  cart: isLoggedIn ? [
+    { id: 1, name: 'Monstera Deliciosa', price: 45.99 },
+    { id: 2, name: 'Assorted Succulents', price: 28.50 }
+  ] : [],
+  logout: () => {}
 });
 
-export default function Header() {
+export default function Header({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, cart, logout } = useAuth();
+  const { user, cart, logout } = useAuth(isLoggedIn);
 
   const [showMenu, setShowMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -65,35 +71,37 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-montserrat">
-          <ul className="flex gap-14 px-4">
+          <ul className="flex gap-14 px-4 items-center">
             <li><Link href="/" className={`nav-link text-black hover:text-[#62cf66] font-montserrat ${active('/')}`}>Home</Link></li>
             <li><Link href="/categories" className={`nav-link text-black hover:text-[#62cf66] font-montserrat ${active('/categories')}`}>Categories</Link></li>
+            {user && (
+              <li>
+                <Link href="/cart" className={`nav-link text-black hover:text-[#62cf66] font-montserrat ${active('/cart')}`}>
+                  Cart {cart.length > 0 && `(${cart.length})`}
+                </Link>
+              </li>
+            )}
             <li><a href="#about" className="nav-link text-black hover:text-[#62cf66] font-montserrat">About</a></li>
             <li><a href="#contact" className="nav-link text-black hover:text-[#62cf66] font-montserrat">Contact</a></li>
           </ul>
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-4 font-montserrat">
-
-          {user && (
-            <Link href="/cart" className="relative flex items-center justify-center min-w-11 min-h-11 text-green-500 hover:text-[#62cf66]">
-              <span className="material-icons">shopping_cart</span>
-              {cart.length > 0 && (
-                <span className="absolute top-0 right-0 bg-red-600 text-white text-[0.7rem] px-1.5 py-0.5 rounded-full min-w-5 text-center">
-                  {cart.length}
-                </span>
-              )}
-            </Link>
-          )}
+        <div className="hidden md:flex items-center gap-3 font-montserrat">
 
           {/* Profile/Signin Button */}
           <div className="relative">
             {user ? (
-              <span className="material-icons text-[1.8rem] cursor-pointer text-green-500 hover:text-[#62cf66] min-w-11 min-h-11 flex items-center justify-center"
+              <span className="cursor-pointer text-green-500 hover:text-[#62cf66] w-22 h-11 flex items-center justify-center transition-colors"
                 onClick={toggleMenu}
               >
-                account_circle
+                <svg 
+                  className="w-8 h-8" 
+                  fill="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
               </span>
             ) : (
               <Link 
@@ -105,16 +113,59 @@ export default function Header() {
             )}
 
             {showMenu && user && (
-              <div
-                onMouseLeave={() => setShowMenu(false)}
-                className="absolute right-0 top-[120%] bg-white border border-gray-300 rounded shadow-md z-1000"
-              >
-                <span
-                  onClick={() => { logout(); router.push('/'); }}
-                  className="block px-4 py-2 min-h-11 leading-8.25 cursor-pointer hover:bg-gray-100 hover:text-[#62cf66]"
-                >
-                  Logout
-                </span>
+              <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6 relative">
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setShowMenu(false)}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+
+                  {/* Profile Header */}
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                      <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900">{user.name}</h2>
+                      <p className="text-sm text-gray-500">Profile Details</p>
+                    </div>
+                  </div>
+
+                  {/* Profile Details */}
+                  <div className="space-y-4 mb-6">
+                    <div className="border-b pb-3">
+                      <label className="text-sm font-medium text-gray-500">Full Name</label>
+                      <p className="text-gray-900">{user.name}</p>
+                    </div>
+                    <div className="border-b pb-3">
+                      <label className="text-sm font-medium text-gray-500">Email</label>
+                      <p className="text-gray-900">{user.email}</p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={() => { logout(); router.push('/'); setShowMenu(false); }}
+                      className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
+                    >
+                      Logout
+                    </button>
+                    <button
+                      onClick={() => setShowMenu(false)}
+                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

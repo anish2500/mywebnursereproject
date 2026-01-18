@@ -1,16 +1,20 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { startTransition, useTransition } from "react";
+import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoginData, loginSchema } from "../schema";
-import { useState } from "react";
+// Import your server action
+import { handleLogin } from "@/lib/actions/auth-action";
 
 export default function LoginForm() {
     const router = useRouter();
+    const [pending, setTransition] = useTransition();
+    const [showPassword, setShowPassword] = useState(false);
+    const [serverError, setServerError] = useState(""); // State for backend errors
+
     const {
         register,
         handleSubmit,
@@ -19,18 +23,30 @@ export default function LoginForm() {
         resolver: zodResolver(loginSchema),
         mode: "onSubmit",
     });
-    const [pending, setTransition] = useTransition();
-    const [showPassword, setShowPassword] = useState(false);
 
-    const submit = async (values: LoginData) => {
-      
-        setTransition( async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            
-            // Redirect to dashboard immediately after successful login
-            router.push('/dashboard');
-        })
-        console.log("login", values);
+    const onSubmit = async (values: LoginData) => {
+        setServerError(""); // Reset error state
+        
+        try {
+            // 1. Call the backend/server action
+            const res = await handleLogin(values);
+
+            if (!res.success) {
+                // 2. Handle failure from backend
+                setServerError(res.message || "Invalid email or password");
+                return;
+            }
+
+            // 3. Handle success and redirect
+            setTransition(() => {
+                router.push('/dashboard');
+                router.refresh(); // Ensure the layout updates with new auth state
+            });
+
+        } catch (err: any) {
+            // 4. Handle unexpected network/code errors
+            setServerError("Something went wrong. Please try again.");
+        }
     };
 
     return (
@@ -40,7 +56,14 @@ export default function LoginForm() {
                 Enter your credentials to access your account
             </p>
 
-            <form onSubmit={handleSubmit(submit)} className="space-y-6">
+            {/* Backend Error Alert */}
+            {serverError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-left">
+                    {serverError}
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Email */}
                 <div className="text-left">
                     <div className="relative">
@@ -51,6 +74,7 @@ export default function LoginForm() {
                             type="email"
                             {...register("email")}
                             placeholder="Email address"
+                            disabled={isSubmitting || pending}
                             className={`w-full px-5 py-4 rounded-xl border bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400 pl-12 ${
                                 errors.email ? 'border-red-500 bg-red-50' : 'border-gray-200'
                             }`}
@@ -71,6 +95,7 @@ export default function LoginForm() {
                             type={showPassword ? 'text' : 'password'}
                             {...register("password")}
                             placeholder="Password"
+                            disabled={isSubmitting || pending}
                             className={`w-full px-5 py-4 rounded-xl border bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400 pl-12 pr-12 ${
                                 errors.password ? 'border-red-500 bg-red-50' : 'border-gray-200'
                             }`}
@@ -94,9 +119,13 @@ export default function LoginForm() {
                 <button
                     type="submit"
                     disabled={isSubmitting || pending}
-                    className="w-full py-4 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition shadow-md hover:shadow-lg disabled:opacity-60"
+                    className="w-full py-4 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                    {isSubmitting || pending ? "Signing in..." : "Continue"}
+                    {isSubmitting || pending ? (
+                        <span className="flex items-center justify-center gap-2">
+                             Signing in...
+                        </span>
+                    ) : "Continue"}
                 </button>
             </form>
 

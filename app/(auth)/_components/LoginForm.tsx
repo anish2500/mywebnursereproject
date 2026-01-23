@@ -6,11 +6,13 @@ import Link from "next/link";
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoginData, loginSchema } from "../schema";
+import { useAuth } from "@/context/AuthContext";
 // Import your server action
 import { handleLogin } from "@/lib/actions/auth-action";
 
 export default function LoginForm() {
     const router = useRouter();
+    const { checkAuth } = useAuth();
     const [pending, setTransition] = useTransition();
     const [showPassword, setShowPassword] = useState(false);
     const [serverError, setServerError] = useState(""); // State for backend errors
@@ -38,6 +40,7 @@ export default function LoginForm() {
             }
 
             // 3. Handle success and redirect
+            await checkAuth(); // Immediately update AuthContext state
             setTransition(() => {
                 router.push('/dashboard');
                 router.refresh(); // Ensure the layout updates with new auth state

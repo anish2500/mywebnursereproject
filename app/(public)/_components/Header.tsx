@@ -3,24 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from "@/context/AuthContext";
 
-
-const useAuth = (isLoggedIn: boolean = false) => ({
-  user: isLoggedIn ? { 
-    name: 'John Doe', 
-    email: 'john.doe@example.com'
-  } : null,
-  cart: isLoggedIn ? [
-    { id: 1, name: 'Monstera Deliciosa', price: 45.99 },
-    { id: 2, name: 'Assorted Succulents', price: 28.50 }
-  ] : [],
-  logout: () => {}
-});
-
-export default function Header({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
+export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, cart, logout } = useAuth(isLoggedIn);
+  const { user, logout } = useAuth();
 
   const [showMenu, setShowMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -77,7 +65,7 @@ export default function Header({ isLoggedIn = false }: { isLoggedIn?: boolean })
             {user && (
               <li>
                 <Link href="/cart" className={`nav-link text-black hover:text-[#62cf66] font-montserrat ${active('/cart')}`}>
-                  Cart {cart.length > 0 && `(${cart.length})`}
+                  Cart
                 </Link>
               </li>
             )}
@@ -133,7 +121,7 @@ export default function Header({ isLoggedIn = false }: { isLoggedIn?: boolean })
                       </svg>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-gray-900">{user.name}</h2>
+                      <h2 className="text-xl font-bold text-gray-900">{user.fullName || user.email}</h2>
                       <p className="text-sm text-gray-500">Profile Details</p>
                     </div>
                   </div>
@@ -142,7 +130,7 @@ export default function Header({ isLoggedIn = false }: { isLoggedIn?: boolean })
                   <div className="space-y-4 mb-6">
                     <div className="border-b pb-3">
                       <label className="text-sm font-medium text-gray-500">Full Name</label>
-                      <p className="text-gray-900">{user.name}</p>
+                      <p className="text-gray-900">{user.fullName || 'Not provided'}</p>
                     </div>
                     <div className="border-b pb-3">
                       <label className="text-sm font-medium text-gray-500">Email</label>
@@ -198,7 +186,7 @@ export default function Header({ isLoggedIn = false }: { isLoggedIn?: boolean })
             <li>
               <Link href="/cart" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 p-4">
                 <span className="material-icons text-lg">shopping_cart</span>
-                Cart {cart.length > 0 && `(${cart.length})`}
+                Cart
               </Link>
             </li>
           )}

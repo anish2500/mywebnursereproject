@@ -1,5 +1,3 @@
-
-
 export const API = {
     AUTH: {
         REGISTER : "/api/auth/register",

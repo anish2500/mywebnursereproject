@@ -2,7 +2,6 @@ import axios from "./axios";
 import { LoginData, RegisterData } from "@/app/(auth)/schema";
 import {API} from "./endpoints";
 
-
 export const register = async (registerData: RegisterData)=>{
     try {
         const response = await axios.post(
@@ -19,7 +18,6 @@ export const register = async (registerData: RegisterData)=>{
     }
 }
 
-
 export const login = async (loginData: LoginData)=>{
     try {
         const response = await axios.post(
@@ -35,4 +33,3 @@ export const login = async (loginData: LoginData)=>{
         );
     }
 }
-

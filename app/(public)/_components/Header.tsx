@@ -1,17 +1,22 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from "@/context/AuthContext";
+import { updateProfile } from "@/lib/api/profile";
+import { getUserData } from "@/lib/cookie";
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, logout, setUser } = useAuth();
 
   const [showMenu, setShowMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleMenu = () => setShowMenu(prev => !prev);
   const toggleMobileMenu = () => setMobileMenuOpen(prev => !prev);
@@ -47,6 +52,62 @@ export default function Header() {
       : '';
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+
+      const response = await updateProfile(formData);
+      
+      // Update user data with the response from upload API
+      if (response.data) {
+        setUser(response.data); // Use the updated user data from API response
+        alert('Profile image updated successfully!');
+        
+        // Clear file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      } else {
+        // Fallback: refresh user data from cookies if response doesn't contain updated data
+        const updatedUserData = await getUserData();
+        if (updatedUserData) {
+          setUser(updatedUserData);
+          alert('Profile image updated successfully!');
+        }
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const getImageUrl = (imagePath: string | null | undefined) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    
+    // Add timestamp to prevent caching issues
+    const timestamp = Date.now();
+    const imageUrl = `http://localhost:5050/${imagePath}?t=${timestamp}`;
+    
+    // Debug logging
+    console.log('Profile image path:', imagePath);
+    console.log('Generated image URL:', imageUrl);
+    
+    return imageUrl;
+  };
+
   return (
     <header className="bg-white text-[#64bf69] py-4 relative shadow-md font-montserrat">
       <div className="w-full flex items-center justify-between relative pl-6 pr-6 font-montserrat">
@@ -80,16 +141,26 @@ export default function Header() {
           {/* Profile/Signin Button */}
           <div className="relative">
             {user ? (
-              <span className="cursor-pointer text-green-500 hover:text-[#62cf66] w-22 h-11 flex items-center justify-center transition-colors"
+              <span 
+                className="cursor-pointer text-green-500 hover:text-[#62cf66] w-22 h-11 flex items-center justify-center transition-colors"
                 onClick={toggleMenu}
               >
-                <svg 
-                  className="w-8 h-8" 
-                  fill="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
+                {getImageUrl(user?.profilePicture) && !imageError ? (
+                  <img
+                    src={getImageUrl(user?.profilePicture) || ''}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <svg 
+                    className="w-8 h-8" 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                )}
               </span>
             ) : (
               <Link 
@@ -115,10 +186,26 @@ export default function Header() {
 
                   {/* Profile Header */}
                   <div className="flex items-center space-x-4 mb-6">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center overflow-hidden">
-                      <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                      </svg>
+                    <div className="w-16 h-16 bg-green-100 rounded-full overflow-hidden flex-shrink-0">
+                      {getImageUrl(user?.profilePicture) && !imageError ? (
+                        <img
+                          src={getImageUrl(user?.profilePicture) || ''}
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                          onLoad={() => {
+                            console.log('Profile image loaded successfully');
+                            setImageError(false);
+                          }}
+                          onError={(e) => {
+                            console.error('Error loading profile image:', e.currentTarget.src);
+                            setImageError(true);
+                          }}
+                        />
+                      ) : (
+                        <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                      )}
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-gray-900">{user.fullName || user.email}</h2>
@@ -136,6 +223,24 @@ export default function Header() {
                       <label className="text-sm font-medium text-gray-500">Email</label>
                       <p className="text-gray-900">{user.email}</p>
                     </div>
+                  </div>
+
+                  {/* Profile Picture Upload */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Update Profile Picture
+                    </label>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 disabled:opacity-50"
+                    />
+                    {uploadingImage && (
+                      <p className="text-sm text-green-600 mt-2">Uploading image...</p>
+                    )}
                   </div>
 
                   {/* Action Buttons */}

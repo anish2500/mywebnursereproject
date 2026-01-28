@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from "@/context/AuthContext";
-import { handleUpdateUserProfile } from "@/lib/actions/auth-action";
+import Link from 'next/link';
+import { handleUpdateProfile } from "@/lib/actions/auth-action";
 import { toast } from "react-toastify";
 
 export default function ProfilePage() {
@@ -26,7 +27,7 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append('profilePicture', file);
 
-      const response = await handleUpdateUserProfile(formData);
+      const response = await handleUpdateProfile(formData);
       
       if (response.data) {
         setUser(response.data);
@@ -143,6 +144,11 @@ export default function ProfilePage() {
                   <dt className="text-sm font-medium text-gray-500 w-32 flex-shrink-0">Role</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 capitalize">{user.role || 'user'}</dd>
                 </div>
+              </div>
+              <div className="mt-6">
+                <Link href="/user/profile" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
+                  Edit Profile
+                </Link>
               </div>
             </div>
           </div>

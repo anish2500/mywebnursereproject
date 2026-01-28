@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RegisterData, registerSchema } from "../schema";
+import { toast } from "react-toastify";
 // Import your server action
 import { handleRegister } from "@/lib/actions/auth-action";
 
@@ -21,9 +22,12 @@ export default function RegisterForm() {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<RegisterData>({
-        resolver: zodResolver(registerSchema),
+    } = useForm<RegisterData & { role: 'user' | 'admin' }>({
+        resolver: zodResolver(registerSchema as any),
         mode: "onSubmit",
+        defaultValues: {
+            role: 'user' as const
+        }
     });
 
     const onSubmit = async (values: RegisterData) => {
@@ -35,13 +39,13 @@ export default function RegisterForm() {
             const res = await handleRegister(values);
 
             if (!res.success) {
-                // 2. Handle failure from backend (e.g., email already exists)
-                setServerError(res.message || "Registration failed");
+                // 2. Handle failure from backend with toast
+                toast.error(res.message || "Registration failed");
                 return;
             }
 
-            // 3. Handle success
-            setShowSuccess(true);
+            // 3. Handle success with toast
+            toast.success("Registration successful! Redirecting to login...");
             setTransition(() => {
                 // Redirecting to login after success
                 setTimeout(() => {
@@ -50,7 +54,7 @@ export default function RegisterForm() {
             });
 
         } catch (err: any) {
-            setServerError("An unexpected error occurred. Please try again.");
+            toast.error("An unexpected error occurred. Please try again.");
         }
     };
 
@@ -188,6 +192,30 @@ export default function RegisterForm() {
                         </div>
                         {errors.confirmPassword?.message && (
                             <span className="text-red-500 text-sm mt-1 block">{errors.confirmPassword.message}</span>
+                        )}
+                    </div>
+
+                    {/* Role Selection */}
+                    <div className="text-left">
+                        <div className="relative">
+                            <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-green-500">
+                                person_outline
+                            </span>
+                            <select
+                                {...register("role")}
+                                disabled={isSubmitting || pending}
+                                className={`w-full px-5 py-4 rounded-xl border bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 pl-12 appearance-none ${errors.role ? 'border-red-500 bg-red-50' : 'border-gray-200'}`}
+                                defaultValue="user"
+                            >
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <span className="material-icons absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                arrow_drop_down
+                            </span>
+                        </div>
+                        {errors.role?.message && (
+                            <span className="text-red-500 text-sm mt-1 block">{errors.role.message}</span>
                         )}
                     </div>
 

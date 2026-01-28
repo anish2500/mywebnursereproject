@@ -7,6 +7,7 @@ import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoginData, loginSchema } from "../schema";
 import { useAuth } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 // Import your server action
 import { handleLogin } from "@/lib/actions/auth-action";
 
@@ -27,28 +28,29 @@ export default function LoginForm() {
     });
 
     const onSubmit = async (values: LoginData) => {
-        setServerError(""); // Reset error state
-        
         try {
             // 1. Call the backend/server action
             const res = await handleLogin(values);
 
             if (!res.success) {
-                // 2. Handle failure from backend
-                setServerError(res.message || "Invalid email or password");
+                // 2. Handle failure from backend with toast
+                toast.error(res.message || "Invalid email or password");
                 return;
             }
 
-            // 3. Handle success and redirect
+            // 3. Handle success and redirect with toast
+            toast.success("Login successful! Redirecting...");
             await checkAuth(); // Immediately update AuthContext state
             setTransition(() => {
-                router.push('/dashboard');
+                // Redirect based on user role
+                const redirectPath = res.data?.role === 'admin' ? '/admin/dashboard' : '/dashboard';
+                router.push(redirectPath);
                 router.refresh(); // Ensure the layout updates with new auth state
             });
 
         } catch (err: any) {
-            // 4. Handle unexpected network/code errors
-            setServerError("Something went wrong. Please try again.");
+            // 4. Handle unexpected network/code errors with toast
+            toast.error("Something went wrong. Please try again.");
         }
     };
 

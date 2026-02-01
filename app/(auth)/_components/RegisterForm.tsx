@@ -22,12 +22,9 @@ export default function RegisterForm() {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<RegisterData & { role: 'user' | 'admin' }>({
-        resolver: zodResolver(registerSchema as any),
+    } = useForm<RegisterData>({
+        resolver: zodResolver(registerSchema),
         mode: "onSubmit",
-        defaultValues: {
-            role: 'user' as const
-        }
     });
 
     const onSubmit = async (values: RegisterData) => {
@@ -192,30 +189,6 @@ export default function RegisterForm() {
                         </div>
                         {errors.confirmPassword?.message && (
                             <span className="text-red-500 text-sm mt-1 block">{errors.confirmPassword.message}</span>
-                        )}
-                    </div>
-
-                    {/* Role Selection */}
-                    <div className="text-left">
-                        <div className="relative">
-                            <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-green-500">
-                                person_outline
-                            </span>
-                            <select
-                                {...register("role")}
-                                disabled={isSubmitting || pending}
-                                className={`w-full px-5 py-4 rounded-xl border bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 pl-12 appearance-none ${errors.role ? 'border-red-500 bg-red-50' : 'border-gray-200'}`}
-                                defaultValue="user"
-                            >
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                            <span className="material-icons absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                arrow_drop_down
-                            </span>
-                        </div>
-                        {errors.role?.message && (
-                            <span className="text-red-500 text-sm mt-1 block">{errors.role.message}</span>
                         )}
                     </div>
 

@@ -1,13 +1,13 @@
 import z from "zod";
 
-export const loginSchema = z.object({
+export const adminLoginSchema = z.object({
     email: z.email({ message: "Enter a valid email" }),
     password: z.string().min(6, { message: "Minimum 6 characters" }),
 });
 
-export type LoginData = z.infer<typeof loginSchema>;
+export type AdminLoginData = z.infer<typeof adminLoginSchema>;
 
-export const registerSchema = z.object({
+export const adminRegisterSchema = z.object({
     fullName: z.string().min(2, "Full name is required").optional().nullable(),
     username: z.string().min(2, "Username is required").optional().nullable(),
     email: z.string().email("Invalid email format"),
@@ -19,4 +19,4 @@ export const registerSchema = z.object({
     message: "Passwords do not match",
 });
 
-export type RegisterData = z.infer<typeof registerSchema>;
+export type AdminRegisterData = z.infer<typeof adminRegisterSchema>;

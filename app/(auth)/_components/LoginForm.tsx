@@ -39,11 +39,29 @@ export default function LoginForm() {
             }
 
             // 3. Handle success and redirect with toast
+            console.log('=== LOGIN DEBUG ===');
+            console.log('Login response:', res);
+            console.log('User data:', res.data);
+            console.log('User role:', res.data?.role);
+            console.log('Role type:', typeof res.data?.role);
+            
+            // Force string comparison with trimming
+            const userRole = String(res.data?.role || '').trim();
+            console.log('Cleaned role:', `"${userRole}"`);
+            console.log('Is admin:', userRole === 'admin');
+            
             toast.success("Login successful! Redirecting...");
             await checkAuth(); // Immediately update AuthContext state
+            
             setTransition(() => {
-                // Redirect based on user role
-                const redirectPath = res.data?.role === 'admin' ? '/admin/dashboard' : '/dashboard';
+                // Explicit role check with string conversion
+                const isAdmin = userRole === 'admin';
+                const redirectPath = isAdmin ? '/admin' : '/dashboard';
+                
+                console.log('Final redirect decision:');
+                console.log('- isAdmin:', isAdmin);
+                console.log('- redirectPath:', redirectPath);
+                
                 router.push(redirectPath);
                 router.refresh(); // Ensure the layout updates with new auth state
             });

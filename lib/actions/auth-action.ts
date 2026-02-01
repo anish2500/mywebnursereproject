@@ -1,90 +1,47 @@
-"use client"
+"use server";
+import { LoginData, RegisterData } from "@/app/(auth)/schema"
+import { redirect } from "next/navigation";
+import { register, login, whoAmI, updateProfile } from '@/lib/api/auth';
+import { clearAuthCookies, setAuthToken, setUserData } from '@/lib/cookie';
+import { revalidatePath } from 'next/cache';
 
-
-import { register, login } from "../api/auth"
-import { API } from "../api/endpoints"
-import { getAuthToken } from "../cookie"
-import axios from "../api/axios"
-import { LoginData, RegisterData } from "@/app/(auth)/schema";
-import { setAuthToken , setUserData, clearAuthCookies } from "../cookie";
-import {redirect} from "next/navigation";
-
-const updateProfile = async (formData: FormData) => {
+export const handleRegister = async (data: RegisterData) => {
     try {
-        const token = await getAuthToken();
-        
-        const response = await axios.put(
-            API.AUTH.UPDATE_PROFILE, 
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    ...(token && { 'Authorization': `Bearer ${token}` }),
-                },
-            }
-        );
-        return response.data; 
-    } catch (err: Error | any) {
-        throw new Error (
-            err.response?.data?.message
-            || err.message
-            || 'Profile update failed'
-        );
-    }
-};
-
-export const handleRegister = async (formData : RegisterData) =>{
-
-
-    try {
-        const result = await register(formData);
-
-            if(result.success){
-                return {
-                    success : true, 
-                    message : 'Registration Successful',
-                    data : result.data
-                };
-            }
-
+        const response = await register(data)
+        if (response.success) {
             return {
-                success : false, 
-                message : result.message || "Registration Failed"
+                success: true,
+                message: 'Registration successful',
+                data: response.data
             }
-    }catch (err: Error | any){
-        return {
-            success: false, message : err.message || "Registration Failed "
         }
+        return {
+            success: false,
+            message: response.message || 'Registration failed'
+        }
+    } catch (error: Error | any) {
+        return { success: false, message: error.message || 'Registration action failed' }
     }
 }
 
-
-
-
-export const handleLogin = async (formData : any) =>{
-
-
+export const handleLogin = async (data: LoginData) => {
     try {
-        const result = await login(formData);
-
-            if(result.success){
-                await setAuthToken(result.token);
-                await setUserData(result.data);
-                return {
-                    success : true, 
-                    message : 'Login Successful',
-                    data : result.data
-                };
-            }
-
+        const response = await login(data)
+        if (response.success) {
+            await setAuthToken(response.token)
+            await setUserData(response.data)
             return {
-                success : false, 
-                message : result.message || "Login Failed"
+                success: true,
+                message: 'Login successful',
+                data: response.data
             }
-    }catch (err: Error | any){
-        return {
-            success: false, message : err.message || "Login Failed "
         }
+        return {
+            success: false,
+            message: response.message || 'Login failed'
+        }
+    } catch (error: Error | any) {
+        return { success: false, message: error.message || 'Login action failed' }
     }
 }
 
@@ -93,27 +50,37 @@ export const handleLogout = async () => {
     return redirect('/login');
 }
 
-export const handleUpdateProfile = async (formData: FormData) => {
+
+export async function handleWhoAmI() {
     try {
-        const result = await updateProfile(formData);
-        
-        if(result.success){
-            await setUserData(result.data);
+        const result = await whoAmI();
+        if (result.success) {
             return {
                 success: true,
-                message: 'Profile update successful',
+                message: 'User data fetched successfully',
                 data: result.data
             };
         }
+        return { success: false, message: result.message || 'Failed to fetch user data' };
+    } catch (error: Error | any) {
+        return { success: false, message: error.message };
+    }
+}
 
-        return {
-            success: false,
-            message: result.message || "Profile update failed"
+export async function handleUpdateProfile(profileData: FormData) {
+    try {
+        const result = await updateProfile(profileData);
+        if (result.success) {
+            await setUserData(result.data); // update cookie 
+            revalidatePath('/user/profile'); // revalidate profile page/ refresh new data
+            return {
+                success: true,
+                message: 'Profile updated successfully',
+                data: result.data
+            };
         }
-    } catch (err: Error | any) {
-        return {
-            success: false,
-            message: err.message || "Profile update failed"
-        }
+        return { success: false, message: result.message || 'Failed to update profile' };
+    } catch (error: Error | any) {
+        return { success: false, message: error.message };
     }
 }

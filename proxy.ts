@@ -1,45 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserData, getAuthToken } from "./lib/cookie";
+import { getAuthToken, getUserData} from "@/lib/cookie";
 
-const publicPaths = ["/login", "/register", "/forgot-password"];
-const adminPaths = ["/admin"]
-const userPaths = ["/user"]
+const publicRoutes = ['/login', '/register', '/forget-password', '/reset-password'];
+const adminRoutes = ['/admin'];
+const userRoutes = ['/user'];
 
-export async function proxy(req: NextRequest) {
-    const {pathname} = req.nextUrl; 
+export async function proxy(request: NextRequest) {
+    const { pathname } = request.nextUrl;
     const token = await getAuthToken();
-    const user = token ? await getUserData(): null; 
+    const user = token ? await getUserData() : null;
 
-    const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
-    const isAdminPath = adminPaths.some(path => pathname.startsWith(path));
-    const isUserPath = userPaths.some(path => pathname.startsWith(path));
-
-    if(!user && !isPublicPath){
-        return NextResponse.redirect(new URL("/login", req.url));
+    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+    const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route));
+    const isUserRoute = userRoutes.some(route => pathname.startsWith(route));
+    
+    if(!token && !isPublicRoute){
+        return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    if(user && token){
-        if(isAdminPath && user.role!== "admin"){
-            return NextResponse.redirect(new URL("/", req.url));
+    if(token && user){
+        if(isAdminRoute && user.role !== 'admin'){
+            return NextResponse.redirect(new URL('/', request.url));
         }
-        if(isUserPath && user.role !== "admin" && user.role !== "user"){
-            return NextResponse.redirect(new URL("/", req.url));
+        if(isUserRoute && user.role !== 'user' && user.role !=='admin'){
+            return NextResponse.redirect(new URL('/', request.url));
         }
     }
 
-    if(isPublicPath && user ){
-        return NextResponse.redirect(new URL("/", req.url));
+    if(isPublicRoute && token) {
+        return NextResponse.redirect(new URL('/', request.url));
     }
 
     return NextResponse.next();
 }
-
 export const config = {
     matcher: [
-        "/admin/:path*", 
-        "/user/:path*",
-        "/login", 
-        "/register",
-        "/forgot-password"
-    ] ,
+        // what routes to protect/match
+        '/admin/:path*',
+        '/user/:path*',
+        '/login',
+        '/register'
+    ]
 }

@@ -34,35 +34,60 @@ const ForgetPasswordForm = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="space-y-4">
+        <form onSubmit={handleSubmit(submit)} className="space-y-6">
             {error && (
-                <p className="text-sm text-red-600">{error}</p>
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+                    {error}
+                </div>
             )}
-            <div className="space-y-1">
-                <label className="text-sm font-medium" htmlFor="email">Email</label>
+            
+            <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center gap-2" htmlFor="email">
+                    <span className="material-icons text-gray-400">email</span>
+                    Email Address
+                </label>
                 <input
                     id="email"
                     type="email"
                     autoComplete="email"
-                    className="h-10 w-full rounded-md border border-black/10 dark:border-white/15 bg-background px-3 text-sm outline-none focus:border-foreground/40"
+                    className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 placeholder-gray-400 pl-12 transition-colors"
                     {...register("email")}
-                    placeholder="you@example.com"
+                    placeholder="Enter your email address"
                 />
                 {errors.email?.message && (
-                    <p className="text-xs text-red-600">{errors.email.message}</p>
+                    <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
+                        <span className="material-icons text-xs">error</span>
+                        {errors.email.message}
+                    </p>
                 )}
             </div>
 
             <button
                 type="submit"
                 disabled={isSubmitting || pending}
-                className="h-10 w-full rounded-md bg-foreground text-background text-sm font-semibold hover:opacity-90 disabled:opacity-60"
+                className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-                {isSubmitting || pending ? "Sending..." : "Send Link"}
+                {isSubmitting || pending ? (
+                    <>
+                        <span className="material-icons animate-spin">refresh</span>
+                        Sending Reset Link...
+                    </>
+                ) : (
+                    <>
+                        <span className="material-icons">send</span>
+                        Send Reset Link
+                    </>
+                )}
             </button>
 
-            <div className="mt-1 text-center text-sm">
-                Already have an account? <Link href="/login" className="font-semibold hover:underline">Log in</Link>
+            <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                    Remember your password?{' '}
+                    <Link href="/login" className="text-blue-600 font-semibold hover:text-blue-700 flex items-center justify-center gap-1">
+                        <span className="material-icons text-sm">login</span>
+                        Back to Login
+                    </Link>
+                </p>
             </div>
         </form>
     );

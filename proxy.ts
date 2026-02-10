@@ -27,9 +27,15 @@ export async function proxy(request: NextRequest) {
         }
     }
 
-    if(isPublicRoute && token) {
-        return NextResponse.redirect(new URL('/', request.url));
+   
+if(isPublicRoute && token) {
+    // Allow password reset routes even when logged in
+    const allowedAuthRoutes = ['/forget-password', '/reset-password'];
+    if (allowedAuthRoutes.includes(pathname)) {
+        return NextResponse.next();
     }
+    return NextResponse.redirect(new URL('/', request.url));
+}
 
     return NextResponse.next();
 }

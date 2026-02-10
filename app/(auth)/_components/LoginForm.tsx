@@ -158,6 +158,13 @@ export default function LoginForm() {
                     Register
                 </Link>
             </p>
+
+            <p className="text-sm text-gray-500 mt-2 text-center">
+                <Link href="/forget-password" className="text-green-600 font-semibold cursor-pointer hover:text-green-700 flex items-center justify-center gap-1">
+                    <span className="material-icons text-sm">lock_open</span>
+                    Forgot your password?
+                </Link>
+            </p>
         </div>
     );
 }

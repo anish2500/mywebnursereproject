@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { register, login, whoAmI, updateProfile } from '@/lib/api/auth';
 import { clearAuthCookies, setAuthToken, setUserData } from '@/lib/cookie';
 import { revalidatePath } from 'next/cache';
+import { resetPassword, requestPasswordReset } from "@/lib/api/auth";
 
 export const handleRegister = async (data: RegisterData) => {
     try {
@@ -84,3 +85,36 @@ export async function handleUpdateProfile(profileData: FormData) {
         return { success: false, message: error.message };
     }
 }
+
+
+
+
+export const handleRequestPasswordReset = async (email: string) => {
+    try {
+        const response = await requestPasswordReset(email);
+        if (response.success) {
+            return {
+                success: true,
+                message: 'Password reset email sent successfully'
+            }
+        }
+        return { success: false, message: response.message || 'Request password reset failed' }
+    } catch (error: Error | any) {
+        return { success: false, message: error.message || 'Request password reset action failed' }
+    }
+};
+
+export const handleResetPassword = async (token: string, newPassword: string) => {
+    try {
+        const response = await resetPassword(token, newPassword);
+        if (response.success) {
+            return {
+                success: true,
+                message: 'Password has been reset successfully'
+            }
+        }
+        return { success: false, message: response.message || 'Reset password failed' }
+    } catch (error: Error | any) {
+        return { success: false, message: error.message || 'Reset password action failed' }
+    }
+};

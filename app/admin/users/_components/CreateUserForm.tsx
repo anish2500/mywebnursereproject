@@ -60,7 +60,7 @@ export default function CreateUserForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl mx-auto p-8 bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-zinc-100 font-[family-name:var(--font-montserrat)] text-zinc-800">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl mx-auto p-8 bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-zinc-100 font-(family-name:--font-montserrat) text-zinc-800">
             
             {/* Header Section */}
             <div className="text-center space-y-1 mb-4">

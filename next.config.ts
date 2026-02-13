@@ -14,6 +14,13 @@ const config: NextConfig = {
         port: '5050',
         pathname: '/profile_pictures/**', // <-- match the actual path
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5050',
+        pathname: '/plant_images/**', // Matches the new folder
+      },
+      
     ],
   },
 }

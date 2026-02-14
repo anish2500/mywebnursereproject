@@ -1,169 +1,137 @@
 'use client';
 
+import React from 'react';
+
 const monsteraImg = '/images/bs.webp';
 const succulentImg = '/images/bs2.jpg';
 const bonsaiImg = '/images/bs3.jpg';
-const nurseryBg = '/images/farm1.jpg';
+const snakeImg = '/images/snake.jpg';
+const roseImg = '/images/rose.jpg';
 
 export default function Body() {
   return (
-    <>
-      {/* HERO SECTION */}
-      <section
-        id="home"
-        className="relative text-white text-center flex items-center justify-center
-                   px-4 py-16 min-h-[60vh]
-                   bg-linear-to-br from-[#4caf50] to-[#a5d6a7]
-                   md:py-24 md:min-h-[70vh]
-                   lg:py-32 lg:min-h-[80vh]"
-        style={{
-          backgroundImage: `url(${nurseryBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/30 z-[1]" />
-
-        {/* Content */}
-        <div className="relative z-[2] max-w-[600px] mx-auto
-                        xl:max-w-[800px]">
-          <h2 className="text-[2rem] leading-tight mb-4 font-bold
-                         sm:text-[2.5rem]
-                         md:text-[3rem]
-                         lg:text-[3.5rem]
-                         xl:text-[4rem]">
-            Bring Nature Home
-          </h2>
-
-          <p className="text-[1.1rem] leading-relaxed mb-8
-                        sm:text-[1.2rem]
-                        md:text-[1.25rem]
-                        lg:text-[1.3rem]">
-            Discover the best selection of indoor and outdoor plants.
-          </p>
-
-          {/* Search */}
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col gap-4 mt-4
-                       sm:flex-row sm:max-w-[500px] sm:mx-auto"
-          >
-            <div className="relative flex-1">
-              <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-[#666] text-[1.2rem]">
-                search
-              </span>
-              <input
-                type="text"
-                placeholder="Search plants..."
-                className="w-full p-4 pl-12 min-h-[52px] rounded-full
-                           border border-white
-                           bg-white/90 text-[#333]
-                           placeholder:text-[#666]
-                           text-base
-                           focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-            </div>
-            <button
-              type="submit"
-              className="min-h-[52px] px-8 py-4 rounded-full cursor-pointer
-                         bg-[#00897b] text-white
-                         font-semibold text-lg
-                         transition-all duration-300
-                         hover:bg-[#26a69a] hover:shadow-lg
-                         focus:outline-none focus:ring-2 focus:ring-white/50"
-            >
-              Search
-            </button>
-          </form>
+    <div className="bg-[#FCFCFC] min-h-screen font-sans pb-20">
+      {/* 1. TOP NAV/TITLE AREA */}
+      <header className="max-w-7xl mx-auto px-6 md:px-12 py-8 flex justify-between items-center">
+        <h1 className="text-[#66BB6A] text-4xl font-black tracking-tight">
+          Dashboard
+        </h1>
+        
+        {/* Searchbox adapted for Desktop width */}
+        <div className="relative hidden md:block w-96">
+          <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+            search
+          </span>
+          <input
+            type="text"
+            placeholder="Search for plants..."
+            className="w-full bg-white border border-gray-100 shadow-sm rounded-2xl py-3 pl-12 pr-4 text-sm focus:ring-2 focus:ring-green-400 outline-none transition-all"
+          />
         </div>
-      </section>
+      </header>
 
-      {/* FEATURES */}
-      <section
-        className="bg-white px-4 py-12
-                   sm:flex sm:flex-wrap sm:justify-center sm:gap-8 sm:py-16
-                   lg:px-8 lg:py-20
-                   xl:px-12 xl:py-24"
-      >
-        {[
-          {
-            title: 'Fresh & Healthy',
-            text: 'All plants are grown with love and care.',
-          },
-          {
-            title: 'Eco-friendly Packaging',
-            text: 'We ensure minimal environmental footprint.',
-          },
-          {
-            title: 'Fast Delivery',
-            text: 'Get your plants delivered at your doorstep quickly.',
-          },
-        ].map((item) => (
-          <div
-            key={item.title}
-            className="text-center p-4 mb-8
-                       sm:flex-1 sm:max-w-[300px] sm:mb-0
-                       lg:flex-[1_1_300px]"
-          >
-            <h3 className="text-[#4caf50] text-[1.3rem] mb-4 font-bold">
-              {item.title}
-            </h3>
-            <p className="text-[#666] text-base leading-relaxed">
-              {item.text}
-            </p>
+      <main className="max-w-7xl mx-auto px-6 md:px-12">
+        
+        {/* 2. HERO SECTION - Expanded for Desktop */}
+        <section className="mb-12">
+          <div className="relative bg-[#3DC352] rounded-[2rem] p-8 md:p-16 overflow-hidden shadow-lg flex items-center min-h-[350px]">
+            <div className="z-10 relative max-w-lg">
+              <h2 className="text-white text-4xl md:text-5xl font-black leading-tight">
+                New Arrivals
+              </h2>
+              <p className="text-white text-lg md:text-xl opacity-90 mt-4 font-medium">
+                Explore the latest plants arrived in our garden. 
+                Bring fresh energy to your home today.
+              </p>
+              <button className="mt-8 bg-[#2E7D32] text-white text-lg font-bold px-10 py-4 rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95">
+                Shop Now
+              </button>
+            </div>
+
+            {/* Floating Circle Images - Larger & Better Positioned for Desktop */}
+            <div className="hidden lg:block">
+              <div className="absolute right-32 top-10 w-48 h-48 rounded-full border-8 border-white/20 overflow-hidden shadow-2xl rotate-12 transition-all hover:rotate-0">
+                <img src={monsteraImg} alt="plant" className="w-full h-full object-cover" />
+              </div>
+              <div className="absolute right-10 top-40 w-40 h-40 rounded-full border-8 border-white/20 overflow-hidden shadow-2xl -rotate-12 transition-all hover:rotate-0">
+                <img src={succulentImg} alt="plant" className="w-full h-full object-cover" />
+              </div>
+              <div className="absolute right-60 bottom-10 w-32 h-32 rounded-full border-4 border-white/20 overflow-hidden shadow-2xl transition-all hover:scale-110">
+                <img src={bonsaiImg} alt="plant" className="w-full h-full object-cover" />
+              </div>
+            </div>
           </div>
-        ))}
-      </section>
+        </section>
 
-      {/* SHOWCASE */}
-      <section
-        id="shop"
-        className="bg-[#f8f9fa] text-center px-8 py-12
-                   md:px-16 md:py-16
-                   lg:px-20 lg:py-20
-                   xl:px-24 xl:py-24"
-      >
-        <h2 className="text-[#2e7d32] text-[1.8rem] mb-8 leading-snug font-bold
-                       md:text-[2rem]">
-          Best Sellers
-        </h2>
-
-        <div
-          className="flex flex-col items-center gap-6
-                     md:flex-row md:justify-center md:gap-8
-                     lg:gap-10
-                     xl:gap-12"
-        >
-          {[
-            { img: monsteraImg, title: 'Monstera Deliciosa' },
-            { img: succulentImg, title: 'Assorted Succulents' },
-            { img: bonsaiImg, title: 'Ficus Bonsai' },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="bg-white rounded-2xl overflow-hidden
-                         w-full max-w-[320px]
-                         shadow-[0_4px_12px_rgba(0,0,0,0.1)]
-                         transition-all duration-300
-                         hover:-translate-y-1
-                         hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]
-                         md:w-[300px]
-                         lg:w-[340px]
-                         xl:w-[360px]"
-            >
-              <img
-                src={item.img}
-                alt={item.title}
-                className="w-full h-[200px] object-cover block"
-              />
-              <h4 className="text-[#4caf50] text-[1.1rem] p-4 m-0 font-semibold">
-                {item.title}
-              </h4>
+        {/* 3. INDOOR SECTION - Responsive Grid */}
+        <section className="mb-16">
+          <div className="flex justify-between items-end mb-8">
+            <div>
+              <h3 className="text-3xl font-black text-gray-900">Indoor</h3>
+              <div className="h-1.5 w-12 bg-[#3DC352] mt-2 rounded-full"></div>
             </div>
-          ))}
+            <button className="text-[#3DC352] font-bold hover:underline">View All</button>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { title: 'Snake Plant', price: 'Rs800', img: snakeImg },
+              { title: 'Rose', price: 'Rs500', img: roseImg },
+              { title: 'Jade Plant', price: 'Rs600', img: succulentImg },
+              { title: 'Monstera', price: 'Rs1500', img: monsteraImg },
+            ].map((plant, idx) => (
+              <PlantCard key={idx} {...plant} category="Indoor" />
+            ))}
+          </div>
+        </section>
+
+        {/* 4. OUTDOOR SECTION */}
+        <section className="mb-16">
+          <div className="flex justify-between items-end mb-8">
+            <div>
+              <h3 className="text-3xl font-black text-gray-900">Outdoor</h3>
+              <div className="h-1.5 w-12 bg-[#3DC352] mt-2 rounded-full"></div>
+            </div>
+            <button className="text-[#3DC352] font-bold hover:underline">View All</button>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { title: 'Peace Lily', price: 'Rs1200', img: succulentImg },
+              { title: 'Jasmine', price: 'Rs600', img: bonsaiImg },
+              { title: 'Lemon Plant', price: 'Rs1200', img: monsteraImg },
+              { title: 'Lotus', price: 'Rs1000', img: snakeImg },
+            ].map((plant, idx) => (
+              <PlantCard key={idx} {...plant} category="Outdoor" />
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+// Sub-component to keep code clean
+function PlantCard({ title, price, img, category }: any) {
+  return (
+    <div className="group bg-white rounded-[2rem] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-xl transition-all border border-gray-50 flex flex-col">
+      <div className="h-64 w-full rounded-[1.5rem] overflow-hidden mb-5">
+        <img 
+          src={img} 
+          alt={title} 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+        />
+      </div>
+      <div className="px-2">
+        <h4 className="text-xl font-bold text-gray-800 mb-1">{title}</h4>
+        <p className="text-sm text-gray-400 font-medium mb-3">{category}</p>
+        <div className="flex justify-between items-center">
+          <p className="text-[#3DC352] font-black text-xl">{price}</p>
+          <button className="bg-gray-100 p-2 rounded-xl group-hover:bg-[#3DC352] group-hover:text-white transition-colors">
+            <span className="material-icons text-sm">add_shopping_cart</span>
+          </button>
         </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 }

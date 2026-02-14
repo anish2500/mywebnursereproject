@@ -30,7 +30,7 @@ export const API = {
     PUBLIC : {
         PLANT: {
             GET_ALL: '/api/plants/',
-            GET_ONE:(id: string) => `/api/plants${id}`,
+            GET_ONE:(id: string) => `/api/plants/${id}`,
         }
     }
 }

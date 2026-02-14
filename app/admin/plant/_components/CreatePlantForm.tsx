@@ -178,7 +178,7 @@ export default function CreatePlantForm() {
             <textarea
               {...register("description")}
               placeholder="Details about watering, light, and soil requirements..."
-              className="min-h-[120px] w-full rounded-xl border border-slate-100 bg-slate-50/50 p-4 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 placeholder:text-slate-400"
+              className="min-h-30 w-full rounded-xl border border-slate-100 bg-slate-50/50 p-4 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 placeholder:text-slate-400"
             />
             {errors.description && (
               <p className="text-xs font-medium text-rose-500 ml-1">{errors.description.message}</p>

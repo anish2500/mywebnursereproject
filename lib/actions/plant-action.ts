@@ -6,12 +6,18 @@ import { getAllPlants, getPlantDetails } from "../api/plant"
 export const handleGetAllPlant = async (
     page: string, 
     size: string, 
-    search? : string) =>{
+    search? : string,
+    name? : string, 
+    category?:string, 
+    minPrice?:string, 
+    maxPrice?:string
+    
+) =>{
     try {
         const currentPage = parseInt(page) || 1;
         const currentSize = parseInt(size) || 12;
 
-        const response = await getAllPlants( currentPage, currentSize, search);
+        const response = await getAllPlants( currentPage, currentSize, search, name,category, minPrice ? parseInt(minPrice):undefined, maxPrice ? parseInt(maxPrice) : undefined);
 
         if(response.success){
             return {

@@ -8,33 +8,26 @@ const bonsaiImg = '/images/bs3.jpg';
 const snakeImg = '/images/snake.jpg';
 const roseImg = '/images/rose.jpg';
 
-export default function Body() {
+interface BodyProps {
+  showManualCards?: boolean;
+}
+
+export default function Body({ showManualCards = true }: BodyProps) {
   return (
     <div className="bg-[#FCFCFC] min-h-screen font-sans pb-20">
       {/* 1. TOP NAV/TITLE AREA */}
       <header className="max-w-7xl mx-auto px-6 md:px-12 py-8 flex justify-between items-center">
-        <h1 className="text-[#66BB6A] text-4xl font-black tracking-tight">
-          Dashboard
-        </h1>
-        
-        {/* Searchbox adapted for Desktop width */}
-        <div className="relative hidden md:block w-96">
-          <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-            search
-          </span>
-          <input
-            type="text"
-            placeholder="Search for plants..."
-            className="w-full bg-white border border-gray-100 shadow-sm rounded-2xl py-3 pl-12 pr-4 text-sm focus:ring-2 focus:ring-green-400 outline-none transition-all"
-          />
-        </div>
-      </header>
+  <h1 className="text-[#66BB6A] text-4xl font-black tracking-tight">
+    Dashboard
+  </h1>
+</header>
+
 
       <main className="max-w-7xl mx-auto px-6 md:px-12">
         
         {/* 2. HERO SECTION - Expanded for Desktop */}
         <section className="mb-12">
-          <div className="relative bg-[#3DC352] rounded-[2rem] p-8 md:p-16 overflow-hidden shadow-lg flex items-center min-h-[350px]">
+          <div className="relative bg-[#3DC352] rounded-4xl p-8 md:p-16 overflow-hidden shadow-lg flex items-center min-h-87.5">
             <div className="z-10 relative max-w-lg">
               <h2 className="text-white text-4xl md:text-5xl font-black leading-tight">
                 New Arrivals
@@ -43,7 +36,7 @@ export default function Body() {
                 Explore the latest plants arrived in our garden. 
                 Bring fresh energy to your home today.
               </p>
-              <button className="mt-8 bg-[#2E7D32] text-white text-lg font-bold px-10 py-4 rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95">
+              <button className="mt-8 bg-[#53b959] text-white text-lg font-bold px-10 py-4 rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95">
                 Shop Now
               </button>
             </div>
@@ -64,6 +57,7 @@ export default function Body() {
         </section>
 
         {/* 3. INDOOR SECTION - Responsive Grid */}
+        {showManualCards && (
         <section className="mb-16">
           <div className="flex justify-between items-end mb-8">
             <div>
@@ -84,8 +78,10 @@ export default function Body() {
             ))}
           </div>
         </section>
+        )}
 
         {/* 4. OUTDOOR SECTION */}
+        {showManualCards && (
         <section className="mb-16">
           <div className="flex justify-between items-end mb-8">
             <div>
@@ -106,6 +102,7 @@ export default function Body() {
             ))}
           </div>
         </section>
+        )}
       </main>
     </div>
   );
@@ -114,8 +111,8 @@ export default function Body() {
 // Sub-component to keep code clean
 function PlantCard({ title, price, img, category }: any) {
   return (
-    <div className="group bg-white rounded-[2rem] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-xl transition-all border border-gray-50 flex flex-col">
-      <div className="h-64 w-full rounded-[1.5rem] overflow-hidden mb-5">
+    <div className="group bg-white rounded-4xl p-4 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-xl transition-all border border-gray-50 flex flex-col">
+      <div className="h-64 w-full rounded-3xl overflow-hidden mb-5">
         <img 
           src={img} 
           alt={title} 

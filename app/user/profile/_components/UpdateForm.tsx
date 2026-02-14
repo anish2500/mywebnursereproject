@@ -1,19 +1,19 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import {  useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { handleUpdateProfile } from "@/lib/actions/auth-action";
-
 import { z } from "zod";
+
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export const updateUserSchema = z.object({
     fullName: z.string().min(2, { message: "Minimum 2 characters" }),
-    email: z.string(),
+    email: z.string().email({ message: "Invalid email address" }),
     username: z.string().min(3, { message: "Minimum 3 characters" }),
     image: z
         .instanceof(File)
@@ -25,6 +25,7 @@ export const updateUserSchema = z.object({
             message: "Only .jpg, .jpeg, .png and .webp formats are supported",
         }),
 })
+
 export type UpdateUserData = z.infer<typeof updateUserSchema>;
 
 export default function UpdateUserForm({ user }: { user: any }) {
@@ -67,10 +68,8 @@ export default function UpdateUserForm({ user }: { user: any }) {
     const getImageUrl = (imagePath: string | null | undefined) => {
         if (!imagePath) return null;
         if (imagePath.startsWith('http')) return imagePath;
-
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5050';
         const timestamp = new Date().getTime();
-
         return `${baseUrl}/${imagePath}?t=${timestamp}`;
     };
 
@@ -99,25 +98,52 @@ export default function UpdateUserForm({ user }: { user: any }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto">
-                <div className="bg-white shadow rounded-lg overflow-hidden">
-                    <div className="px-6 py-8 sm:px-10">
-                        <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
-                        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <div className="min-h-screen bg-[#fcfdfd] py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl mx-auto">
+                <div className="bg-white shadow-[0_20px_50px_rgba(0,0,0,0.04)] rounded-[2.5rem] border border-emerald-50/50 overflow-hidden">
+                    <div className="px-8 py-10 sm:px-12">
+                        
+                        {/* Header Area */}
+                        <div className="mb-10 text-center sm:text-left">
+                            <h1 className="text-3xl font-extrabold text-emerald-950 tracking-tight">Edit Profile</h1>
+                            <p className="text-emerald-600/60 font-medium text-sm mt-1">Update your personal presence and information</p>
+                        </div>
+
+                        <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
                             {error && (
-                                <p className="text-sm text-red-600">{error}</p>
+                                <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl">
+                                    <p className="text-sm text-rose-600 font-medium flex items-center gap-2">
+                                        <span>⚠️</span> {error}
+                                    </p>
+                                </div>
                             )}
 
-                            {/* Profile Image Display */}
-                            <div className="mb-4">
-                                {previewImage ? (
-                                    <div className="relative w-24 h-24">
-                                        <img
-                                            src={previewImage}
-                                            alt="Profile Image Preview"
-                                            className="w-24 h-24 rounded-full object-cover"
-                                        />
+                            {/* Aesthetic Profile Image Display */}
+                            <div className="flex flex-col items-center sm:flex-row gap-8 pb-8 border-b border-emerald-50/60">
+                                <div className="relative group">
+                                    <div className="w-28 h-28 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl bg-emerald-50 ring-1 ring-emerald-100 transition-transform group-hover:scale-105 duration-300">
+                                        {previewImage ? (
+                                            <img
+                                                src={previewImage}
+                                                alt="Preview"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : user?.profilePicture ? (
+                                            <img
+                                                src={getImageUrl(user.profilePicture) || ''}
+                                                alt="Profile"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-emerald-200">
+                                                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {previewImage && (
                                         <Controller
                                             name="image"
                                             control={control}
@@ -125,83 +151,102 @@ export default function UpdateUserForm({ user }: { user: any }) {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleDismissImage(onChange)}
-                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                                                    className="absolute -top-2 -right-2 bg-rose-500 text-white rounded-xl p-1.5 shadow-lg shadow-rose-200 hover:bg-rose-600 transition-colors"
                                                 >
-                                                    ✕
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
                                                 </button>
                                             )}
                                         />
-                                    </div>
-                                ) : user?.profilePicture ? (
-                                    <img
-                                        src={getImageUrl(user.profilePicture) || ''}
-                                        alt="Profile Image"
-                                        className="w-24 h-24 rounded-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center">
-                                        <span className="text-gray-600">No Image</span>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Profile Image Input */}
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">Profile Image</label>
-                                <Controller
-                                    name="image"
-                                    control={control}
-                                    render={({ field: { onChange } }) => (
-                                        <input
-                                            ref={fileInputRef}
-                                            type="file"
-                                            onChange={(e) => handleImageChange(e.target.files?.[0], onChange)}
-                                            accept=".jpg,.jpeg,.png,.webp"
-                                        />
                                     )}
-                                />
-                                {errors.image && <p className="text-sm text-red-600">{errors.image.message}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1" htmlFor="username">Username</label>
-                                <input
-                                    id="username"
-                                    type="text"
-                                    {...register("username")}
-                                    className="w-full border border-gray-300 rounded px-3 py-2"
-                                />
-                                {errors.username && <p className="text-sm text-red-600">{errors.username.message}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1" htmlFor="email">Email</label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    {...register("email")}
-                                    className="w-full border border-gray-300 rounded px-3 py-2"
-                                />
-                                {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
-                            </div>
-                            {/* Full Name Input */}
-                            <div>
-                                <label className="block text-sm font-medium mb-1" htmlFor="fullName">Full Name</label>
-                                <input
-                                    id="fullName"
-                                    type="text"
-                                    {...register("fullName")}
-                                    className="w-full border border-gray-300 rounded px-3 py-2"
-                                />
-                                {errors.fullName && <p className="text-sm text-red-600">{errors.fullName.message}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-3">
+                                    <label className="text-sm font-bold text-emerald-900 uppercase tracking-widest">Profile Picture</label>
+                                    <div className="flex items-center gap-3">
+                                        <Controller
+                                            name="image"
+                                            control={control}
+                                            render={({ field: { onChange } }) => (
+                                                <div className="relative">
+                                                    <input
+                                                        ref={fileInputRef}
+                                                        type="file"
+                                                        onChange={(e) => handleImageChange(e.target.files?.[0], onChange)}
+                                                        className="hidden"
+                                                        id="file-upload"
+                                                        accept=".jpg,.jpeg,.png,.webp"
+                                                    />
+                                                    <label 
+                                                        htmlFor="file-upload" 
+                                                        className="px-5 py-2.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-100 cursor-pointer hover:bg-emerald-100 transition-all active:scale-95 inline-block"
+                                                    >
+                                                        Upload New Photo
+                                                    </label>
+                                                </div>
+                                            )}
+                                        />
+                                        <p className="text-[11px] text-emerald-600/50 max-w-[150px] leading-tight">JPG, PNG or WebP. Max size of 5MB.</p>
+                                    </div>
+                                    {errors.image && <p className="text-xs font-semibold text-rose-500 mt-1">● {errors.image.message}</p>}
+                                </div>
                             </div>
 
-                            {/* Submit Button */}
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                            >
-                                {isSubmitting ? 'Updating...' : 'Update Profile'}
-                            </button>
+                            {/* Form Fields Section */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-emerald-800/60 uppercase tracking-wider ml-1" htmlFor="username">Username</label>
+                                    <input
+                                        id="username"
+                                        type="text"
+                                        {...register("username")}
+                                        placeholder="@botanist"
+                                        className="w-full bg-emerald-50/30 border border-emerald-100 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all placeholder:text-emerald-200"
+                                    />
+                                    {errors.username && <p className="text-xs font-semibold text-rose-500 ml-1 italic">{errors.username.message}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-emerald-800/60 uppercase tracking-wider ml-1" htmlFor="fullName">Full Name</label>
+                                    <input
+                                        id="fullName"
+                                        type="text"
+                                        {...register("fullName")}
+                                        placeholder="Enter your name"
+                                        className="w-full bg-emerald-50/30 border border-emerald-100 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all placeholder:text-emerald-200"
+                                    />
+                                    {errors.fullName && <p className="text-xs font-semibold text-rose-500 ml-1 italic">{errors.fullName.message}</p>}
+                                </div>
+
+                                <div className="space-y-2 sm:col-span-2">
+                                    <label className="text-xs font-bold text-emerald-800/60 uppercase tracking-wider ml-1" htmlFor="email">Email Address</label>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        {...register("email")}
+                                        placeholder="email@example.com"
+                                        className="w-full bg-emerald-50/30 border border-emerald-100 rounded-2xl px-5 py-3.5 text-sm focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all placeholder:text-emerald-200"
+                                    />
+                                    {errors.email && <p className="text-xs font-semibold text-rose-500 ml-1 italic">{errors.email.message}</p>}
+                                </div>
+                            </div>
+
+                            {/* Aesthetic Submit Button */}
+                            <div className="pt-6">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full sm:w-auto px-10 py-4 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-emerald-200 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            <span>Saving Changes...</span>
+                                        </>
+                                    ) : (
+                                        'Update Profile'
+                                    )}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

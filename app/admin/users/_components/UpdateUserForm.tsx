@@ -84,7 +84,7 @@ export default function UpdateUserForm({ user }: { user: any }) {
   return (
     <div className="mt-8 bg-white border border-emerald-100 rounded-2xl shadow-sm overflow-hidden max-w-2xl mx-auto">
       {/* Header Section matching Table style */}
-      <div className="p-5 bg-gradient-to-r from-emerald-50/50 to-white border-b border-emerald-50">
+      <div className="p-5 bg-linear-to-r from-emerald-50/50 to-white border-b border-emerald-50">
         <h2 className="text-xl font-semibold text-emerald-900">Update User Profile</h2>
         <p className="text-xs text-emerald-600 font-medium">Editing: {user._id}</p>
       </div>

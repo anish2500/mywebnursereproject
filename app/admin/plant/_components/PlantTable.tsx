@@ -159,7 +159,7 @@ const PlantTable = ({
       />
 
       {/* Aesthetic Search Bar */}
-      <div className="p-5 bg-gradient-to-r from-emerald-50/50 to-white flex flex-wrap items-center justify-between gap-4 border-b border-emerald-50">
+      <div className="p-5 bg-linear-to-r from-emerald-50/50 to-white flex flex-wrap items-center justify-between gap-4 border-b border-emerald-50">
         <h2 className="text-xl font-semibold text-emerald-900">Plant Inventory</h2>
         <div className="flex gap-2 w-full sm:w-auto">
           <input

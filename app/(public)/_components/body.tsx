@@ -10,23 +10,28 @@ const roseImg = '/images/rose.jpg';
 
 interface BodyProps {
   showManualCards?: boolean;
+  showHero?:boolean;
+  showTitle?:boolean;
 }
 
-export default function Body({ showManualCards = true }: BodyProps) {
+export default function Body({ showManualCards = true, showHero = true , showTitle = true}: BodyProps) {
   return (
     <div className="bg-[#FCFCFC] min-h-screen font-sans pb-20">
       {/* 1. TOP NAV/TITLE AREA */}
-      <header className="max-w-7xl mx-auto px-6 md:px-12 py-8 flex justify-between items-center">
-  <h1 className="text-[#66BB6A] text-4xl font-black tracking-tight">
-    Dashboard
-  </h1>
-</header>
+      {showTitle && (
+           <header className="max-w-7xl mx-auto px-6 md:px-12 py-8 flex justify-between items-center">
+        <h1 className="text-[#66BB6A] text-4xl font-black tracking-tight">
+         Dashboard
+      </h1>
+        </header>
+      )}
 
 
       <main className="max-w-7xl mx-auto px-6 md:px-12">
         
         {/* 2. HERO SECTION - Expanded for Desktop */}
-        <section className="mb-12">
+        {showHero && (
+          <section className="mb-12">
           <div className="relative bg-[#3DC352] rounded-4xl p-8 md:p-16 overflow-hidden shadow-lg flex items-center min-h-87.5">
             <div className="z-10 relative max-w-lg">
               <h2 className="text-white text-4xl md:text-5xl font-black leading-tight">
@@ -55,6 +60,7 @@ export default function Body({ showManualCards = true }: BodyProps) {
             </div>
           </div>
         </section>
+        )}
 
         {/* 3. INDOOR SECTION - Responsive Grid */}
         {showManualCards && (

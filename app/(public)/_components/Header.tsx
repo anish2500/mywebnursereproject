@@ -45,13 +45,18 @@ export default function Header() {
     return null;
   }
 
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Plants", path: "/plants" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
-    ...(user ? [{ name: "Profile", path: "/profile" }] : [])
-  ];
+ const navLinks = user
+  ? [
+      { name: "Home", path: "/dashboard" },
+      { name: "Plants", path: "/plants" },
+      { name: "Profile", path: "/profile" }
+    ]
+  : [
+      { name: "Home", path: "/" },
+      { name: "Plants", path: "/plants" },
+      { name: "About", path: "/about" },
+      { name: "Contact", path: "/contact" }
+    ];
 
   return (
     <header className="bg-white shadow-sm">
@@ -59,8 +64,8 @@ export default function Header() {
         <div className="flex justify-between h-16 items-center">
           
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="text-xl font-bold text-green-600">
+          <div className="shrink-0">
+            <Link href={user ? "/dashboard" : "/"} className="text-xl font-bold text-green-600">
               Nursere
             </Link>
           </div>
@@ -83,7 +88,7 @@ export default function Header() {
 
                     {/* underline indicator */}
                     <span
-                      className={`absolute left-0 -bottom-1 h-[2px] bg-green-600 transition-all duration-300
+                      className={`absolute left-0 -bottom-1 h-0.5 bg-green-600 transition-all duration-300
                         ${active ? "w-full" : "w-0 group-hover:w-full"}
                       `}
                     />

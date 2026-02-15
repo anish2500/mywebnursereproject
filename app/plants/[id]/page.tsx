@@ -6,10 +6,28 @@ import Link from "next/link";
 import Header from "../../(public)/_components/Header";
 import Footer from "../../(public)/_components/footer";
 import { handleGetPlantDetails } from "@/lib/actions/plant-action";
+import { useCart } from "@/context/CartContext";
+import { toast } from "react-toastify";
+
 export default function PlantDetailsPage() {
   const params = useParams();
   const [plant, setPlant] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { addItem, cart } = useCart();
+  
+  const isInCart = cart?.items?.some(
+    (item) => item.plantId?._id === plant?._id
+  );
+
+  const handleAddToCart = async () => {
+    try {
+      await addItem(plant._id, 1);
+      toast.success("Added to cart!");
+    } catch (error) {
+      toast.error("Failed to add to cart");
+    }
+  };
+
   useEffect(() => {
     const fetchPlantDetails = async () => {
       try {
@@ -109,8 +127,16 @@ export default function PlantDetailsPage() {
                 <span className="text-gray-800">{plant.plantType}</span>
               </div>
             )}
-            <button className="w-full lg:w-auto px-8 py-4 bg-[#3DC352] text-white font-bold rounded-2xl hover:bg-[#2E7D32] transition-all shadow-lg shadow-green-200">
-              Add to Cart
+            <button 
+              onClick={handleAddToCart}
+              disabled={isInCart}
+              className={`w-full lg:w-auto px-8 py-4 font-bold rounded-2xl transition-all shadow-lg ${
+                isInCart 
+                  ? 'bg-gray-100 text-gray-600 cursor-not-allowed' 
+                  : 'bg-[#3DC352] text-white hover:bg-[#2E7D32] shadow-green-200'
+              }`}
+            >
+              {isInCart ? 'Already in Cart' : 'Add to Cart'}
             </button>
           </div>
         </div>

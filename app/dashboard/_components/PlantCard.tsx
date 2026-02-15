@@ -1,10 +1,26 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
+import { toast } from "react-toastify";
 
 export default function PlantCard({ plant }: { plant: any }) {
-  // Debug: Log the plant object to see its structure
-  console.log("Plant object:", plant);
+  const { addItem, cart } = useCart();
+  
+  const isInCart = cart?.items?.some(
+    (item) => item.plantId?._id === plant._id
+  );
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await addItem(plant._id, 1);
+      toast.success("Added to cart!");
+    } catch (error) {
+      toast.error("Failed to add to cart");
+    }
+  };
 
   // 1. Fixed Image Logic: Access the first image in the array if plantImage is an array
   const imageUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/plant_images/${plant.plantImage}`;
@@ -38,8 +54,18 @@ export default function PlantCard({ plant }: { plant: any }) {
             Rs {plant.price}
           </span>
           
-          <button className="bg-gray-100 p-2.5 rounded-xl text-gray-600 hover:bg-[#3DC352] hover:text-white transition-colors">
-            <span className="material-icons text-lg">add_shopping_cart</span>
+          <button 
+            onClick={handleAddToCart}
+            className={`bg-gray-100 p-2.5 rounded-xl transition-colors ${
+              isInCart 
+                ? 'bg-[#3DC352] text-white cursor-not-allowed' 
+                : 'text-gray-600 hover:bg-[#3DC352] hover:text-white'
+            }`}
+            disabled={isInCart}
+          >
+            <span className="material-icons text-lg">
+              {isInCart ? 'check' : 'add_shopping_cart'}
+            </span>
           </button>
         </div>
       </div>

@@ -45,5 +45,10 @@ export const API = {
         REMOVE: (plantId: string) => `/api/cart/${plantId}`,
         CLEAR: '/api/cart', // optional if you support clear cart
     },
+    ORDER: {
+        CREATE: 'api/orders', 
+        GET_ALL: '/api/orders', 
+        GET_ONE: (orderId: string) =>`/api/orders/${orderId}`,
+    }
     
 }

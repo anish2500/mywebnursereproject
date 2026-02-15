@@ -5,9 +5,15 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import Header from "../(public)/_components/Header";
 import Footer from "../(public)/_components/footer";
+import { useRouter } from "next/navigation";
+
+import { createOrder, CreateOrderItem} from "@/lib/api/order";
 
 export default function CartPage() {
   const { cart, loading, updateItem, removeItem } = useCart();
+  const router = useRouter();
+
+
 
   if (loading) {
     return (
@@ -66,6 +72,24 @@ export default function CartPage() {
       toast.error("Failed to remove item");
     }
   };
+
+  const handleCheckout = async () =>{
+    try {
+      const items: CreateOrderItem [] = cart.items.map((item)=>({
+        plantId: item.plantId._id, 
+        quantity: item.quantity, 
+        price: item.plantId.price
+
+
+      }));
+
+      await createOrder(items, cart.totalAmount);
+      toast.success('Order placed successfully!');
+      router.push('/orders');
+    }catch (error:any){
+      toast.error(error.message || 'Failed to place orders');
+    }
+  }
 
   return (
     <div className="bg-[#FCFCFC] min-h-screen">
@@ -162,7 +186,9 @@ export default function CartPage() {
                 <span className="text-2xl font-black text-[#3DC352]">Rs {cart.totalAmount}</span>
               </div>
 
-              <button className="w-full py-4 bg-[#3DC352] text-white font-bold rounded-2xl hover:bg-[#2E7D32] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+              <button 
+              onClick={handleCheckout}
+              className="w-full py-4 bg-[#3DC352] text-white font-bold rounded-2xl hover:bg-[#2E7D32] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                 Proceed to Checkout
               </button>
 

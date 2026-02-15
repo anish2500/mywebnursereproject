@@ -23,14 +23,27 @@ export const API = {
             DELETE: (plantId: string) => `/api/admin/plants/${plantId}`,
 
 
-        } 
+        },
+         
     },
+
+    
 
 
     PUBLIC : {
         PLANT: {
             GET_ALL: '/api/plants/',
             GET_ONE:(id: string) => `/api/plants/${id}`,
-        }
-    }
+        },
+       
+    },
+
+    CART: {
+        GET: '/api/cart',
+        ADD: '/api/cart',
+        UPDATE: (plantId: string) => `/api/cart/${plantId}`,
+        REMOVE: (plantId: string) => `/api/cart/${plantId}`,
+        CLEAR: '/api/cart', // optional if you support clear cart
+    },
+    
 }

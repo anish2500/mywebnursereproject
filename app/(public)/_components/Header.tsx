@@ -51,6 +51,7 @@ export default function Header() {
   ? [
       { name: "Home", path: "/dashboard" },
       { name: "Plants", path: "/plants" },
+      { name: "Orders", path: "/orders"},
       { name: "Profile", path: "/profile" }
     ]
   : [

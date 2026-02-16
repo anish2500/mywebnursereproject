@@ -11,6 +11,7 @@ interface AuthContextProps {
     logout: () => Promise<void>;
     loading: boolean;
     checkAuth: () => Promise<void>;
+    updateUser: (user:any) => void; 
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -49,9 +50,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.error("Logout failed:", error);
         }
     }
+    const updateUser = (updatedUser:any)=>{
+        setUser(updatedUser);
+    }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, logout, loading, checkAuth }}>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, logout, loading, checkAuth, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

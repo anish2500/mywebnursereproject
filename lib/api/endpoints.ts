@@ -24,6 +24,11 @@ export const API = {
 
 
         },
+        ORDER: {
+            GET_ALL: '/api/admin/orders/all', 
+            GET_ONE: (orderId: string) => `/api/admin/orders/${orderId}`, 
+
+        },
          
     },
 

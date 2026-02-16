@@ -134,7 +134,7 @@ export default function UpdateUserForm({ user }: { user: any }) {
                             {/* Aesthetic Profile Image Display */}
                             <div className="flex flex-col items-center sm:flex-row gap-8 pb-8 border-b border-emerald-50/60">
                                 <div className="relative group">
-                                    <div className="w-28 h-28 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl bg-emerald-50 ring-1 ring-emerald-100 transition-transform group-hover:scale-105 duration-300">
+                                    <div className="w-28 h-28 rounded-4xl overflow-hidden border-4 border-white shadow-xl bg-emerald-50 ring-1 ring-emerald-100 transition-transform group-hover:scale-105 duration-300">
                                         {previewImage ? (
                                             <img
                                                 src={previewImage}
@@ -198,7 +198,7 @@ export default function UpdateUserForm({ user }: { user: any }) {
                                                 </div>
                                             )}
                                         />
-                                        <p className="text-[11px] text-emerald-600/50 max-w-[150px] leading-tight">JPG, PNG or WebP. Max size of 5MB.</p>
+                                        <p className="text-[11px] text-emerald-600/50 max-w-37.5 leading-tight">JPG, PNG or WebP. Max size of 5MB.</p>
                                     </div>
                                     {errors.image && <p className="text-xs font-semibold text-rose-500 mt-1">● {errors.image.message}</p>}
                                 </div>

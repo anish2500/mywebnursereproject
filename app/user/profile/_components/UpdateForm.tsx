@@ -4,9 +4,11 @@ import { Controller, useForm } from "react-hook-form";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { handleUpdateProfile } from "@/lib/actions/auth-action";
 import { z } from "zod";
+
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -29,7 +31,7 @@ export const updateUserSchema = z.object({
 export type UpdateUserData = z.infer<typeof updateUserSchema>;
 
 export default function UpdateUserForm({ user }: { user: any }) {
-    const { register, handleSubmit, control, formState: { errors, isSubmitting } } =
+    const { register, handleSubmit, control, reset, formState: { errors, isSubmitting } } =
         useForm<UpdateUserData>({
             resolver: zodResolver(updateUserSchema),
             values: {
@@ -39,6 +41,7 @@ export default function UpdateUserForm({ user }: { user: any }) {
             }
         });
 
+    const { updateUser} = useAuth();    
     const router = useRouter();
     const [error, setError] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -87,6 +90,16 @@ export default function UpdateUserForm({ user }: { user: any }) {
             if (!response.success) {
                 throw new Error(response.message || 'Update profile failed');
             }
+            if(response.user){
+                updateUser(response.user);
+            }
+            reset({
+                fullName: data.fullName, 
+                email: data.email, 
+                username: data.username, 
+                image: undefined
+            })
+            
 
             handleDismissImage();
             toast.success('Profile updated successfully');

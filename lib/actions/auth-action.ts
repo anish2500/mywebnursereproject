@@ -5,6 +5,7 @@ import { register, login, whoAmI, updateProfile } from '@/lib/api/auth';
 import { clearAuthCookies, setAuthToken, setUserData } from '@/lib/cookie';
 import { revalidatePath } from 'next/cache';
 import { resetPassword, requestPasswordReset } from "@/lib/api/auth";
+import { updateUser } from "../api/admin/user";
 
 export const handleRegister = async (data: RegisterData) => {
     try {
@@ -76,8 +77,10 @@ export async function handleUpdateProfile(profileData: FormData) {
             revalidatePath('/user/profile'); // revalidate profile page/ refresh new data
             return {
                 success: true,
+                user:result.data, 
                 message: 'Profile updated successfully',
                 data: result.data
+                
             };
         }
         return { success: false, message: result.message || 'Failed to update profile' };

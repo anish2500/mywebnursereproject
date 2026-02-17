@@ -48,12 +48,17 @@ export const API = {
         ADD: '/api/cart',
         UPDATE: (plantId: string) => `/api/cart/${plantId}`,
         REMOVE: (plantId: string) => `/api/cart/${plantId}`,
-        CLEAR: '/api/cart', // optional if you support clear cart
+        CLEAR: '/api/cart',
     },
     ORDER: {
-        CREATE: 'api/orders', 
+        CREATE: '/api/orders', 
         GET_ALL: '/api/orders', 
         GET_ONE: (orderId: string) =>`/api/orders/${orderId}`,
+    },
+    FAVORITES: {
+        CREATE: '/api/favorites', 
+        GET_ALL: '/api/favorites', 
+        REMOVE: (plantId: string) =>`/api/favorites/${plantId}`
     }
     
 }

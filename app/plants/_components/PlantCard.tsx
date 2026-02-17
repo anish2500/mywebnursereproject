@@ -3,13 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { toast } from "react-toastify";
+import { useFavorites } from "@/context/FavoritesContext";
 
 export default function PlantCard({ plant }: { plant: any }) {
   const { addItem, cart } = useCart();
-  
+  const { addItem: addFavorite, removeItem: removeFavorite, isFavorite } = useFavorites();
+ 
   const isInCart = cart?.items?.some(
     (item) => item.plantId?._id === plant._id
   );
+
+  const isInFavorites = isFavorite(plant._id);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -19,6 +23,22 @@ export default function PlantCard({ plant }: { plant: any }) {
       toast.success("Added to cart!");
     } catch (error) {
       toast.error("Failed to add to cart");
+    }
+  };
+
+  const handleFavoriteToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      if (isInFavorites) {
+        await removeFavorite(plant._id);
+        toast.success("Removed from favorites!");
+      } else {
+        await addFavorite(plant._id);
+        toast.success("Added to favorites!");
+      }
+    } catch (error) {
+      toast.error("Failed to update favorites");
     }
   };
 
@@ -48,19 +68,34 @@ export default function PlantCard({ plant }: { plant: any }) {
             Rs {plant.price}
           </span>
           
-          <button 
-            onClick={handleAddToCart}
-            className={`bg-gray-100 p-2.5 rounded-xl transition-colors ${
-              isInCart 
-                ? 'bg-[#3DC352] text-white cursor-not-allowed' 
-                : 'text-gray-600 hover:bg-[#3DC352] hover:text-white'
-            }`}
-            disabled={isInCart}
-          >
-            <span className="material-icons text-lg">
-              {isInCart ? 'check' : 'add_shopping_cart'}
-            </span>
-          </button>
+          <div className="flex gap-2">
+            <button 
+              onClick={handleFavoriteToggle}
+              className={`p-2.5 rounded-xl transition-colors ${
+                isInFavorites 
+                  ? 'bg-red-500 text-white' 
+                  : 'text-gray-600 hover:bg-red-500 hover:text-white'
+              }`}
+            >
+              <span className="material-icons text-lg">
+                {isInFavorites ? 'favorite' : 'favorite_border'}
+              </span>
+            </button>
+
+            <button 
+              onClick={handleAddToCart}
+              className={`bg-gray-100 p-2.5 rounded-xl transition-colors ${
+                isInCart 
+                  ? 'bg-[#3DC352] text-white cursor-not-allowed' 
+                  : 'text-gray-600 hover:bg-[#3DC352] hover:text-white'
+              }`}
+              disabled={isInCart}
+            >
+              <span className="material-icons text-lg">
+                {isInCart ? 'check' : 'add_shopping_cart'}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 

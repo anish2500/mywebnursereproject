@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CartProvider } from "@/context/CartContext";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 
 
 const montserrat = Montserrat({
@@ -37,6 +38,7 @@ export default function RootLayout({
       <body className="antialiased">
         <AuthProvider>
           <CartProvider>
+            <FavoritesProvider>
           {children}
           <ToastContainer
             position="top-right"
@@ -50,6 +52,7 @@ export default function RootLayout({
             pauseOnHover
             theme="light"
           />
+          </FavoritesProvider>
           </CartProvider>
         </AuthProvider>
       </body>

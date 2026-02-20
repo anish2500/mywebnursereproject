@@ -97,6 +97,14 @@ export default function PlantDetailsPage() {
             <div className="text-4xl font-black text-[#3DC352]">
               Rs {plant.price}
             </div>
+            {plant.stock !== undefined && (
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500 font-medium">Availability:</span>
+                <span className={`font-bold ${plant.stock > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                  {plant.stock > 0 ? (plant.stock > 5 ? 'In Stock' : `Only ${plant.stock} available`) : 'Out of Stock'}
+                </span>
+              </div>
+            )}
             {plant.description && (
               <div className="space-y-2">
                 <h3 className="text-lg font-bold text-gray-800">Description</h3>
@@ -129,14 +137,14 @@ export default function PlantDetailsPage() {
             )}
             <button 
               onClick={handleAddToCart}
-              disabled={isInCart}
+              disabled={isInCart || !plant.stock || plant.stock === 0}
               className={`w-full lg:w-auto px-8 py-4 font-bold rounded-2xl transition-all shadow-lg ${
-                isInCart 
-                  ? 'bg-gray-100 text-gray-600 cursor-not-allowed' 
+                isInCart || !plant.stock || plant.stock === 0
+                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
                   : 'bg-[#3DC352] text-white hover:bg-[#2E7D32] shadow-green-200'
               }`}
             >
-              {isInCart ? 'Already in Cart' : 'Add to Cart'}
+              {isInCart ? 'Already in Cart' : !plant.stock || plant.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
             </button>
           </div>
         </div>

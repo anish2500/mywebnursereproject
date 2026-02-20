@@ -35,11 +35,10 @@ export const PlantSchema = z.object({
     .number()
     .positive("Price must be a positive number"),
 
-
-  careInstructions: z
-    .string()
-    .min(10, "Care instructions must be at least 10 characters")
-    .optional(),
+  stock: z
+    .number()
+    .int("Stock must be a whole number")
+    .min(0, "Stock cannot be negative"),
 
   plantImage: z
     .instanceof(File)

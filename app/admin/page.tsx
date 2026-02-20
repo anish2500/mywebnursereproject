@@ -28,46 +28,8 @@ export default async function Page() {
                 </div>
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    {/* Total Users */}
-                    <Link 
-                        href="/admin/users"
-                        className="group bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-emerald-300 transition-all duration-200"
-                    >
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-slate-500">Total Users</p>
-                                <p className="text-3xl font-bold text-slate-800 mt-1">{totalUsers}</p>
-                            </div>
-                            <div className="h-12 w-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <p className="text-xs text-emerald-600 mt-3 font-medium group-hover:translate-x-1 transition-transform">
-                            View all users →
-                        </p>
-                    </Link>
-                    {/* Total Plants */}
-                    <Link 
-                        href="/admin/plant"
-                        className="group bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-emerald-300 transition-all duration-200"
-                    >
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-slate-500">Total Plants</p>
-                                <p className="text-3xl font-bold text-slate-800 mt-1">{totalPlants}</p>
-                            </div>
-                            <div className="h-12 w-12 rounded-xl bg-emerald-100 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <p className="text-xs text-emerald-600 mt-3 font-medium group-hover:translate-x-1 transition-transform">
-                            View inventory →
-                        </p>
-                    </Link>
+                   
+                  
                     {/* Total Orders */}
                     <Link 
                         href="/admin/orders"

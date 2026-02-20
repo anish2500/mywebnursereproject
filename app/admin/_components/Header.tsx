@@ -1,9 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 
-export default function Header() {
+export default function Header({onMenuClick}: {onMenuClick?: () => void }) {
     const { logout, user } = useAuth();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
         <header className="sticky top-0 z-50 bg-white/70 dark:bg-zinc-950/ backdrop-blur-md border-b border-[#32CD32]/20 font-(family-name:--font-montserrat)">
@@ -23,6 +25,13 @@ export default function Header() {
                                 <span className="text-[9px] font-bold text-zinc-400">VERSION 2.0</span>
                             </div>
                         </Link>
+                        <button
+                            onClick={onMenuClick}
+                            className="xl:hidden p-2 text-zinc-600 hover:text-[#32CD32]"
+                                    >
+                                 <span className="material-icons">menu</span>
+                            </button>
+                        
                     </div>
 
                     {/* Right: User Section */}

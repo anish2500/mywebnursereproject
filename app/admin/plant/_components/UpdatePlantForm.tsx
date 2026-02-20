@@ -26,7 +26,8 @@ export default function UpdatePlantForm({ plant }: { plant: any }) {
       name: plant.name || "",
       description: plant.description || "",
       category: plant.category || "",
-      price: plant.price || "",
+      price: plant.price ?? "",
+      stock: plant.stock || 0,
       plantImage: undefined,
     },
   });
@@ -69,6 +70,9 @@ export default function UpdatePlantForm({ plant }: { plant: any }) {
         if (data.category) formData.append("category", data.category);
         if (data.price !== undefined)
           formData.append("price", String(data.price));
+        
+        if (data.stock !== undefined)
+          formData.append("stock", String(data.stock));
 
         if (data.plantImage) {
           formData.append("plantImage", data.plantImage);
@@ -80,7 +84,7 @@ export default function UpdatePlantForm({ plant }: { plant: any }) {
           throw new Error(response.message || "Update Plant Failed");
         }
 
-        reset();
+        reset(data);
         handleDismissImage();
         toast.success("Plant updated successfully 🌿");
       } catch (err: any) {
@@ -182,7 +186,7 @@ export default function UpdatePlantForm({ plant }: { plant: any }) {
             <textarea
               {...register("description")}
               placeholder="How should this plant be cared for?"
-              className="min-h-[120px] w-full rounded-xl border border-slate-100 bg-slate-50/50 p-4 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
+              className="min-h-30 w-full rounded-xl border border-slate-100 bg-slate-50/50 p-4 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
             />
             {errors.description && <p className="text-xs font-medium text-rose-500 ml-1">{errors.description.message}</p>}
           </div>
@@ -203,11 +207,22 @@ export default function UpdatePlantForm({ plant }: { plant: any }) {
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₹</span>
                 <input
                   type="number"
-                  {...register("price")}
+                  {...register("price", {valueAsNumber : true})}
                   placeholder="0.00"
                   className="w-full rounded-xl border border-slate-100 bg-slate-50/50 pl-8 pr-4 py-3 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 ml-1">Stock Quantity</label>
+              <input
+                type="number"
+                {...register("stock", { valueAsNumber: true })}
+                placeholder="0"
+                className="w-full rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 placeholder:text-slate-400"
+              />
+              {errors.stock && <p className="text-xs font-medium text-rose-500 ml-1">{errors.stock.message}</p>}
             </div>
           </div>
         </div>

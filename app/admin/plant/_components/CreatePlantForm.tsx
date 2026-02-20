@@ -68,6 +68,7 @@ export default function CreatePlantForm() {
         formData.append("description", data.description);
         formData.append("category", data.category);
         formData.append("price", data.price.toString());
+        formData.append("stock", data.stock.toString());
 
         if (data.plantImage) {
           formData.append("plantImage", data.plantImage);
@@ -215,6 +216,19 @@ export default function CreatePlantForm() {
               </div>
               {errors.price && (
                 <p className="text-xs font-medium text-rose-500 ml-1">{errors.price.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 ml-1">Stock Quantity</label>
+              <input
+                type="number"
+                {...register("stock", { valueAsNumber: true })}
+                placeholder="0"
+                className="w-full rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 placeholder:text-slate-400"
+              />
+              {errors.stock && (
+                <p className="text-xs font-medium text-rose-500 ml-1">{errors.stock.message}</p>
               )}
             </div>
           </div>

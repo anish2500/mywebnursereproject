@@ -1,5 +1,5 @@
 "use server"
-import { createPlant, getAllPlant, getPlantById, deletePlant, updatePlant } from "@/lib/api/admin/plant"
+import { createPlant, getAllPlant, getPlantById, deletePlant, updatePlant, restockPlant } from "@/lib/api/admin/plant"
 import { revalidatePath } from "next/cache"
 
 export const handleCreatePlant = async (data: FormData)=>{
@@ -123,5 +123,19 @@ export const handleDeletePlant = async (id: string)=>{
         }
     } catch (error: Error | any){
         return { success: false, message: error.message || 'Delete plant action failed'}
+    }
+}
+
+
+export const handleRestockPlant = async (id: string, stock : number) =>{
+    try {
+        const response = await restockPlant(id, stock);
+        if(response.success){
+            revalidatePath('/admin/plants');
+            return {success: true, message: "Plant restocked successfully"};
+        }
+        return { success: false, message : response.message };
+    }catch (error: Error | any){
+        return {success: false, message : error.message};
     }
 }

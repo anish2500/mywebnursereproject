@@ -21,6 +21,7 @@ export const API = {
             GET_ONE: (plantId: string) => `/api/admin/plants/${plantId}`,
             UPDATE: (plantId: string) => `/api/admin/plants/${plantId}`,
             DELETE: (plantId: string) => `/api/admin/plants/${plantId}`,
+            RESTOCK:  (plantId: string) => `/api/admin/plants/${plantId}/restock`,
 
 
         },

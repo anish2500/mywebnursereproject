@@ -188,7 +188,8 @@ const PlantTable = ({
               <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Plant Name</th>
               <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Category</th>
               <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Price</th>
-              
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Stock</th>
+               
               <th className="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -230,10 +231,26 @@ const PlantTable = ({
                     ₹{Number(plant.price).toLocaleString()}
                   </td>
 
-             
+                  <td className="px-6 py-4">
+                    <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${
+                      (plant.stock ?? 0) > 5 ? 'bg-green-100 text-green-700' :
+                      (plant.stock ?? 0) > 0 ? 'bg-orange-100 text-orange-700' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                      {plant.stock ?? 0}
+                    </span>
+                  </td>
+
+                  
 
                   <td className="px-6 py-4 text-sm">
                     <div className="flex items-center justify-center gap-4">
+                      <Link
+                        href={`/admin/plant/${plant._id}/edit`}
+                        className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors font-medium"
+                      >
+                        View
+                      </Link>
                       <Link
                         href={`/admin/plant/${plant._id}/edit`}
                         className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors font-medium"

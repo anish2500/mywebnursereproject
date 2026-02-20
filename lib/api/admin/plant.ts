@@ -84,3 +84,14 @@ export const deletePlant = async (id: string) =>{
         );
     }
 }
+
+
+export const restockPlant = async(id: string, stock:number) =>{
+    try {
+        const response = await axios.patch(API.ADMIN.PLANT.RESTOCK(id), {stock});
+        return response.data;  
+
+    }catch (error: any){
+        throw new Error (error.response?.data?.message || 'Restock Failed');
+    }
+}

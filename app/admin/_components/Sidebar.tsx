@@ -8,6 +8,8 @@ const ADMIN_LINKS = [
     { href: "/admin/users", label: "Users", icon: "group" },
     { href: "/admin/plant", label: "Plant", icon: "local_florist" },
     { href: "/admin/orders", label: "Orders" , icon: "shopping_cart"},
+    { href: "/admin/adminProfile", label: "Profile", icon: "person" },
+
 
 ];
 

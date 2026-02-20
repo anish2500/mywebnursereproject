@@ -56,6 +56,15 @@ export default function PlantCard({ plant }: { plant: any }) {
         <div className="absolute top-3 left-3 bg-[#3DC352] text-white text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-wider shadow-sm">
           {plant.category}
         </div>
+        {plant.stock !== undefined && (
+          <div className={`absolute top-3 right-3 text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-wider shadow-sm ${
+            plant.stock > 5 ? 'bg-green-500 text-white' : 
+            plant.stock > 0 ? 'bg-orange-500 text-white' : 
+            'bg-red-500 text-white'
+          }`}>
+            {plant.stock > 0 ? (plant.stock > 5 ? 'In Stock' : `Only ${plant.stock} left`) : 'Out of Stock'}
+          </div>
+        )}
       </div>
 
       <div className="px-2 space-y-1">
@@ -85,11 +94,11 @@ export default function PlantCard({ plant }: { plant: any }) {
             <button 
               onClick={handleAddToCart}
               className={`bg-gray-100 p-2.5 rounded-xl transition-colors ${
-                isInCart 
-                  ? 'bg-[#3DC352] text-white cursor-not-allowed' 
+                isInCart || !plant.stock || plant.stock === 0
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                   : 'text-gray-600 hover:bg-[#3DC352] hover:text-white'
               }`}
-              disabled={isInCart}
+              disabled={isInCart || !plant.stock || plant.stock === 0}
             >
               <span className="material-icons text-lg">
                 {isInCart ? 'check' : 'add_shopping_cart'}

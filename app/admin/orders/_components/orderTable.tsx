@@ -25,6 +25,12 @@ export default function OrderTable({ orders }: OrderTableProps) {
                                 Total Amount
                             </th>
                             <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                                Payment Status
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                                Payment Method
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
                                 Date
                             </th>
                             <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
@@ -47,11 +53,30 @@ export default function OrderTable({ orders }: OrderTableProps) {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-emerald-600">
                                     Rs {order.totalAmount?.toFixed(2)}
                                 </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        ${order.paymentStatus === 'paid'
+                                            ? 'bg-emerald-100 text-emerald-800'
+                                            : order.paymentStatus === 'pending'
+                                            ? 'bg-yellow-100 text-yellow-800'
+                                            : order.paymentStatus === 'failed'
+                                            ? 'bg-red-100 text-red-800'
+                                            : order.paymentStatus === 'refunded'
+                                            ? 'bg-blue-100 text-blue-800'
+                                            : 'bg-slate-100 text-slate-800'
+                                        }`}
+                                    >
+                                        {order.paymentStatus || 'pending'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                    {order.paymentMethod || 'N/A'}
+                                </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                     {new Date(order.createdAt).toLocaleDateString()}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                    <Link 
+                                    <Link
                                         href={`/admin/orders/${order._id}`}
                                         className="text-emerald-600 hover:text-emerald-800 font-medium"
                                     >

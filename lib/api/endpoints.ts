@@ -28,6 +28,8 @@ export const API = {
         ORDER: {
             GET_ALL: '/api/admin/orders/all', 
             GET_ONE: (orderId: string) => `/api/admin/orders/${orderId}`, 
+            UPDATE_PAYMENT: (orderId: string) => `/api/orders/${orderId}/payment`, 
+            REFUND : (orderId: string) => `/api/orders/${orderId}/refund`,
 
         },
          
@@ -55,6 +57,7 @@ export const API = {
         CREATE: '/api/orders', 
         GET_ALL: '/api/orders', 
         GET_ONE: (orderId: string) =>`/api/orders/${orderId}`,
+        // UPDATE: (orderId: string) => `/api/orders/${orderId}`
     },
     FAVORITES: {
         CREATE: '/api/favorites', 

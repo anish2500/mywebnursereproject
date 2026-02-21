@@ -10,8 +10,16 @@ export default async function Page() {
     const totalPlants = plantsResponse.success ? plantsResponse.pagination?.total || 0 : 0;
     const totalOrders = ordersResponse.success ? ordersResponse.data?.length || 0 : 0;
     
-    const totalRevenue = ordersResponse.success 
-        ? ordersResponse.data?.reduce((sum: number, order: any) => sum + (order.totalAmount || 0), 0) 
+   const totalRevenue = ordersResponse.success 
+    ? ordersResponse.data
+        ?.filter((order: any) => order.paymentStatus === 'paid')
+        .reduce((sum: number, order: any) => sum + (order.totalAmount || 0), 0) 
+    : 0;
+    const paidOrders = ordersResponse.success 
+        ? ordersResponse.data?.filter((order: any) => order.paymentStatus === 'paid').length || 0
+        : 0;
+    const pendingPayments = ordersResponse.success 
+        ? ordersResponse.data?.filter((order: any) => order.paymentStatus === 'pending').length || 0
         : 0;
     const recentOrders = ordersResponse.success ? ordersResponse.data?.slice(0, 5) : [];
     return (
@@ -65,6 +73,40 @@ export default async function Page() {
                         </div>
                         <p className="text-xs text-slate-400 mt-3">
                             All time earnings
+                        </p>
+                    </div>
+                    {/* Paid Orders */}
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-slate-500">Paid Orders</p>
+                                <p className="text-3xl font-bold text-emerald-600 mt-1">{paidOrders}</p>
+                            </div>
+                            <div className="h-12 w-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-3">
+                            Successfully paid
+                        </p>
+                    </div>
+                    {/* Pending Payments */}
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-slate-500">Pending Payments</p>
+                                <p className="text-3xl font-bold text-yellow-600 mt-1">{pendingPayments}</p>
+                            </div>
+                            <div className="h-12 w-12 rounded-xl bg-yellow-100 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-3">
+                            Awaiting payment
                         </p>
                     </div>
                 </div>
@@ -161,8 +203,19 @@ export default async function Page() {
                                             {new Date(order.createdAt).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                                New
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                ${order.paymentStatus === 'paid'
+                                                    ? 'bg-emerald-100 text-emerald-800'
+                                                    : order.paymentStatus === 'pending'
+                                                    ? 'bg-yellow-100 text-yellow-800'
+                                                    : order.paymentStatus === 'failed'
+                                                    ? 'bg-red-100 text-red-800'
+                                                    : order.paymentStatus === 'refunded'
+                                                    ? 'bg-blue-100 text-blue-800'
+                                                    : 'bg-slate-100 text-slate-800'
+                                                }`}
+                                            >
+                                                {order.paymentStatus || 'pending'}
                                             </span>
                                         </td>
                                     </tr>

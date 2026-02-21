@@ -26,6 +26,7 @@ export interface Order {
     totalAmount: number; 
     createdAt: string; 
     updatedAt: string; 
+ 
 }
 
 export const createOrder = async (items: CreateOrderItem[], totalAmount : number) =>{
@@ -63,4 +64,6 @@ export const cancelOrder = async (orderId: string) =>{
         throw new Error(error.response?.data?.message || error.message || 'Failed to cancel order');
     }
 };
+
+
 

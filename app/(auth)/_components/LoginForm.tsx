@@ -56,7 +56,7 @@ export default function LoginForm() {
             setTransition(() => {
                 // Explicit role check with string conversion
                 const isAdmin = userRole === 'admin';
-                const redirectPath = isAdmin ? '/admin' : '';
+                const redirectPath = isAdmin ? '/admin' : '/dashboard';
                 
                 console.log('Final redirect decision:');
                 console.log('- isAdmin:', isAdmin);

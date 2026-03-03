@@ -28,6 +28,7 @@ export const API = {
         ORDER: {
             GET_ALL: '/api/admin/orders/all', 
             GET_ONE: (orderId: string) => `/api/admin/orders/${orderId}`, 
+            UPDATE_STATUS: (orderId: string) =>`/api/admin/orders${orderId}/status`,
             UPDATE_PAYMENT: (orderId: string) => `/api/orders/${orderId}/payment`, 
             REFUND : (orderId: string) => `/api/orders/${orderId}/refund`,
 

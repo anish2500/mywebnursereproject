@@ -1,4 +1,8 @@
+"use client"
+
 import { Order } from "@/lib/api/admin/order";
+import { handleUpdatePaymentStatus, handleReFundOrder } from "@/lib/actions/admin/order-action";
+import { useState } from "react";
 import Link from "next/link";
 
 interface OrderTableProps {
@@ -6,6 +10,30 @@ interface OrderTableProps {
 }
 
 export default function OrderTable({ orders }: OrderTableProps) {
+    const [loadingId, setLoadingId] = useState<string | null>(null);
+
+    const handleStatusChange = async (orderId: string, newStatus: string) => {
+        setLoadingId(orderId);
+        try {
+            await handleUpdatePaymentStatus(orderId, newStatus);
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+        }
+        setLoadingId(null);
+    };
+
+    const handleRefund = async (orderId: string) => {
+        if (!confirm("Are you sure you want to refund this order?")) return;
+        setLoadingId(orderId);
+        try {
+            await handleReFundOrder(orderId);
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+        }
+        setLoadingId(null);
+    };
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
@@ -73,15 +101,40 @@ export default function OrderTable({ orders }: OrderTableProps) {
                                     {order.paymentMethod || 'N/A'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                                    {new Date(order.createdAt).toLocaleDateString()}
+                                    {new Date(order.createdAt).toLocaleDateString('en-US')}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                    <Link
-                                        href={`/admin/orders/${order._id}`}
-                                        className="text-emerald-600 hover:text-emerald-800 font-medium"
-                                    >
-                                        View Details
-                                    </Link>
+                                    {order.paymentStatus === 'pending' && (
+                                        <>
+                                            <button
+                                                onClick={() => handleStatusChange(order._id, 'paid')}
+                                                disabled={loadingId === order._id}
+                                                className="text-emerald-600 hover:text-emerald-800 font-medium mr-3 disabled:opacity-50"
+                                            >
+                                                {loadingId === order._id ? 'Processing...' : 'Mark Paid'}
+                                            </button>
+                                            <button
+                                                onClick={() => handleStatusChange(order._id, 'failed')}
+                                                disabled={loadingId === order._id}
+                                                className="text-red-600 hover:text-red-800 font-medium mr-3 disabled:opacity-50"
+                                            >
+                                                Mark Failed
+                                            </button>
+                                        </>
+                                    )}
+                                    {order.paymentStatus === 'paid' && (
+                                        <button
+                                            onClick={() => handleRefund(order._id)}
+                                            disabled={loadingId === order._id}
+                                            className="text-blue-600 hover:text-blue-800 font-medium disabled:opacity-50"
+                                        >
+                                            Refund
+                                        </button>
+                                    )}
+                                    {(order.paymentStatus === 'failed' || order.paymentStatus === 'refunded') && (
+                                        <span className="text-slate-400 text-xs">No actions</span>
+                                    )}
+                                   
                                 </td>
                             </tr>
                         ))}

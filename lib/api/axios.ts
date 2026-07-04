@@ -8,8 +8,6 @@ const axiosInstance  = axios.create(
         headers: {
             "Content-Type" : "application/json",
         },
-        // Remove withCredentials for now to avoid CORS issues
-        // Your backend should handle cookies automatically for same-origin requests
     }
 )
 

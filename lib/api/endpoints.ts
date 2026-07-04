@@ -31,6 +31,7 @@ export const API = {
             UPDATE_STATUS: (orderId: string) =>`/api/admin/orders${orderId}/status`,
             UPDATE_PAYMENT: (orderId: string) => `/api/orders/${orderId}/payment`, 
             REFUND : (orderId: string) => `/api/orders/${orderId}/refund`,
+            DELETE: (orderId: string) => `/api/orders/${orderId}`,
 
         },
          

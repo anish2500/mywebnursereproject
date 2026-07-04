@@ -7,10 +7,12 @@ import Footer from "../(public)/_components/footer";
 import Image from "next/image";
 import {toast } from "react-toastify";
 import Link from "next/link";
+import DeleteModal from "../_components/DeleteModal";
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancelling , setCancelling] = useState<string | null>(null);
+  const [showCancelModal, setShowCancelModal] = useState<{orderId: string | null}>({ orderId: null });
   const { user } = useAuth();
   useEffect(() => {
     const fetchOrders = async () => {
@@ -39,12 +41,13 @@ export default function OrdersPage() {
   }
 
   const handleCancelOrder = async (orderId: string) =>{
-    if(!confirm("Are you sure you want to cancel this order?")) return ; 
+    setShowCancelModal({ orderId: null });
     setCancelling(orderId);
     try{
         await cancelOrder(orderId);
         toast.success("Order cancelled successfully");
         const data = await getOrders();
+        setOrders(data);
     }catch (error: any){
         toast.error(error.message || "Failed to cancel orders");
     }finally{
@@ -117,7 +120,7 @@ export default function OrdersPage() {
                 </div>
                 <div className="flex justify-end mt-4 pt-4 border-t border-gray-100">
                   <button
-                    onClick={() => handleCancelOrder(order._id)}
+                    onClick={() => setShowCancelModal({ orderId: order._id })}
                     disabled={cancelling === order._id}
                     className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                   >
@@ -131,6 +134,13 @@ export default function OrdersPage() {
           </div>
         )}
       </main>
+      <DeleteModal
+        isOpen={!!showCancelModal.orderId}
+        onClose={() => setShowCancelModal({ orderId: null })}
+        onConfirm={() => showCancelModal.orderId && handleCancelOrder(showCancelModal.orderId)}
+        title="Cancel Order"
+        description="Are you sure you want to cancel this order? This action cannot be undone."
+      />
       <Footer />
     </div>
   );

@@ -1,9 +1,10 @@
 "use client"
 
 import { Order } from "@/lib/api/admin/order";
-import { handleUpdatePaymentStatus, handleReFundOrder } from "@/lib/actions/admin/order-action";
+import { handleUpdatePaymentStatus, handleReFundOrder, handleDeleteOrder } from "@/lib/actions/admin/order-action";
 import { useState } from "react";
 import Link from "next/link";
+import DeleteModal from "../../../_components/DeleteModal";
 
 interface OrderTableProps {
     orders: Order[];
@@ -11,6 +12,7 @@ interface OrderTableProps {
 
 export default function OrderTable({ orders }: OrderTableProps) {
     const [loadingId, setLoadingId] = useState<string | null>(null);
+    const [deleteOrderId, setDeleteOrderId] = useState<string | null>(null);
 
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         setLoadingId(orderId);
@@ -34,7 +36,20 @@ export default function OrderTable({ orders }: OrderTableProps) {
         }
         setLoadingId(null);
     };
+
+    const handleDelete = async (orderId: string) => {
+        setDeleteOrderId(null);
+        setLoadingId(orderId);
+        try {
+            await handleDeleteOrder(orderId);
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+        }
+        setLoadingId(null);
+    };
     return (
+        <>
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
                 <table className="w-full">
@@ -123,13 +138,22 @@ export default function OrderTable({ orders }: OrderTableProps) {
                                         </>
                                     )}
                                     {order.paymentStatus === 'paid' && (
-                                        <button
-                                            onClick={() => handleRefund(order._id)}
-                                            disabled={loadingId === order._id}
-                                            className="text-blue-600 hover:text-blue-800 font-medium disabled:opacity-50"
-                                        >
-                                            Refund
-                                        </button>
+                                        <>
+                                            <button
+                                                onClick={() => handleRefund(order._id)}
+                                                disabled={loadingId === order._id}
+                                                className="text-blue-600 hover:text-blue-800 font-medium mr-3 disabled:opacity-50"
+                                            >
+                                                Refund
+                                            </button>
+                                            <button
+                                                onClick={() => setDeleteOrderId(order._id)}
+                                                disabled={loadingId === order._id}
+                                                className="text-red-600 hover:text-red-800 font-medium disabled:opacity-50"
+                                            >
+                                                Delete
+                                            </button>
+                                        </>
                                     )}
                                     {(order.paymentStatus === 'failed' || order.paymentStatus === 'refunded') && (
                                         <span className="text-slate-400 text-xs">No actions</span>
@@ -147,5 +171,13 @@ export default function OrderTable({ orders }: OrderTableProps) {
                 </div>
             )}
         </div>
+        <DeleteModal
+            isOpen={!!deleteOrderId}
+            onClose={() => setDeleteOrderId(null)}
+            onConfirm={() => deleteOrderId && handleDelete(deleteOrderId)}
+            title="Delete Order"
+            description="Are you sure you want to delete this order? This action cannot be undone."
+        />
+        </>
     );
 }

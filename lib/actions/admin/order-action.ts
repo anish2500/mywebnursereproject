@@ -1,6 +1,6 @@
 "use server"
 
-import { getAllOrders, getOrderById, updatePaymentStatus, refundOrder } from "@/lib/api/admin/order"
+import { getAllOrders, getOrderById, updatePaymentStatus, refundOrder, deleteOrder } from "@/lib/api/admin/order"
 
 export const handleGetAllOrders = async () =>{
     try {
@@ -78,6 +78,28 @@ export const handleReFundOrder = async (orderId: string) =>{
             success: false, 
             message: error.message || 'Refund action failed'
             
+        };
+    }
+};
+
+export const handleDeleteOrder = async (orderId: string) =>{
+    try {
+        const response = await deleteOrder(orderId);
+        if(response.success){
+            return {
+                success: true, 
+                message: 'Order deleted successfully', 
+                data: response.data
+            };
+        }
+        return {
+            success: false, 
+            message: response.message || 'Delete failed'
+        };
+    }catch(error: Error | any){
+        return {
+            success: false, 
+            message: error.message || 'Delete action failed'
         };
     }
 };

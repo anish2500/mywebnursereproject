@@ -66,7 +66,16 @@ export const refundOrder = async (orderId: string) =>{
     try {
         const response = await axios.post(API.ADMIN.ORDER.REFUND(orderId));
         return response.data; 
-    }catch (error: Error | any){
+    }catch(error: Error | any){
         throw new Error(error.response?.data?.message || error.message || 'Refund order failed');
+    }
+};
+
+export const deleteOrder = async (orderId: string) =>{
+    try {
+        const response = await axios.delete(API.ADMIN.ORDER.DELETE(orderId));
+        return response.data;
+    }catch(error: Error | any){
+        throw new Error(error.response?.data?.message || error.message || 'Delete order failed');
     }
 };
